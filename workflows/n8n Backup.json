@@ -1,9 +1,9 @@
 {
   "createdAt": "2025-09-02T18:31:28.310Z",
-  "updatedAt": "2025-09-02T18:35:22.763Z",
+  "updatedAt": "2025-09-02T18:36:13.891Z",
   "id": "UgSvPTJUacQRtrA4",
   "name": "n8n Backup",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -662,15 +662,17 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "b2a5dde0-a54a-41c1-8c5b-ce788e3c7ffa",
-  "triggerCount": 0,
+  "versionId": "11e884f8-5a1c-4010-95df-9a61ef7ccf67",
+  "triggerCount": 1,
   "tags": [],
   "shared": [
     {
