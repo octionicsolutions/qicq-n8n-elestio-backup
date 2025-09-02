@@ -1,0 +1,311 @@
+{
+  "createdAt": "2025-07-18T18:10:24.221Z",
+  "updatedAt": "2025-07-20T22:00:24.949Z",
+  "id": "uzwe6p9dFQOF1IFN",
+  "name": "Run 2-way Sync between CS and ZD",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "=workflowRunning",
+        "key": "=workflowRunning_{{ $workflow.id }}",
+        "options": {}
+      },
+      "id": "48ea6da5-0149-4aa1-9a5f-136cc2734c84",
+      "name": "Get Flag",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1088,
+        32
+      ],
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=workflowRunning_{{ $workflow.id }}",
+        "value": "running",
+        "expire": true,
+        "ttl": 3600
+      },
+      "id": "fd3eab30-4aa3-4e6d-909a-897d8c8a07e2",
+      "name": "Set Flag",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        32
+      ],
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=workflowRunning_{{ $workflow.id }}"
+      },
+      "id": "6aa9e007-4cc1-431a-94c4-41f01e6aa7ae",
+      "name": "Remove Flag",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        16,
+        32
+      ],
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6b3359cb-c8fc-4663-b2a9-e367ad4fcba5",
+              "leftValue": "={{ $json.workflowRunning }}",
+              "rightValue": "={{ null }}",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "31f0dd86-1e5d-46d4-9890-058c6dcbcf1c",
+      "name": "Flag does not exists",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -864,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "a58b8fa5-e043-414b-b776-6228bc9577ea",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1312,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Make sure Timeout is set to 30 minutes within both workflows",
+        "height": 256,
+        "width": 456,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -496,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "c585d6c8-7f10-48c6-be29-8437ba01d7dd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "aQi8s6fYP7X0iwlf",
+          "mode": "list",
+          "cachedResultName": "Sync contacts from ZD to CS"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        32
+      ],
+      "id": "9e1120dd-1231-4ea2-b34e-446bdebc9e19",
+      "name": "Sync contacts from ZD to CS",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "XijVrxbRFoQP3UEm",
+          "mode": "list",
+          "cachedResultName": "Sync contacts from CS to ZD"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -432,
+        32
+      ],
+      "id": "ba3d2bd5-37c2-410f-8928-fd2d9ed9c2f3",
+      "name": "Sync contacts from CS to ZD",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Get Flag": {
+      "main": [
+        [
+          {
+            "node": "Flag does not exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Flag": {
+      "main": [
+        [
+          {
+            "node": "Sync contacts from CS to ZD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flag does not exists": {
+      "main": [
+        [
+          {
+            "node": "Set Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync contacts from ZD to CS": {
+      "main": [
+        [
+          {
+            "node": "Remove Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync contacts from CS to ZD": {
+      "main": [
+        [
+          {
+            "node": "Sync contacts from ZD to CS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": {
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3efa94c4-7f88-48a3-8477-bcdaea2ce334",
+  "triggerCount": 1,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:13:03.391Z",
+      "updatedAt": "2025-07-18T18:13:03.391Z",
+      "id": "9Unu8zOsMe5ug14X",
+      "name": "main"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-07-18T18:10:24.221Z",
+      "updatedAt": "2025-07-18T18:10:24.221Z",
+      "role": "workflow:owner",
+      "workflowId": "uzwe6p9dFQOF1IFN",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
