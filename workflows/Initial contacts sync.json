@@ -1,0 +1,3228 @@
+{
+  "createdAt": "2025-07-18T17:56:03.580Z",
+  "updatedAt": "2025-07-20T14:01:42.688Z",
+  "id": "bqF1kdjtwuXcXYN4",
+  "name": "Initial contacts sync",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        2960
+      ],
+      "id": "99287f87-7a67-4539-ab96-bbd73669b15b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1488,
+        240
+      ],
+      "id": "2030e4ab-7d03-4ee9-884f-23a79e82bc65",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "is_organization",
+              "value": "false"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1712,
+        320
+      ],
+      "id": "6b345734-2a26-49ee-9925-ce13d0a732f0",
+      "name": "Zendesk: Search by Email",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9a03da1d-b511-4aac-92e6-bce663034902",
+              "leftValue": "={{ $json.email.isEmail() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        240
+      ],
+      "id": "d4c4b672-ec43-47d9-92e6-983ed7383d0b",
+      "name": "Only keep valid emails"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        144
+      ],
+      "id": "2b260082-0836-4fa8-8fc9-629e8970d286",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "url": "https://api.cyclesoftware.nl/api/v1/customers/list.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "offset",
+              "value": "={{ $json.offset }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        352
+      ],
+      "id": "6f6cc710-0137-458c-97d0-6129525dea8e",
+      "name": "Cyclesoftware: Get all contacts",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2848,
+        528
+      ],
+      "id": "70e51f87-9798-4b3c-a044-efc8eaa28817",
+      "name": "Store result in NocoDB",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b6f76a6-0147-4011-b3e0-0410385fa32d",
+              "name": "cs_id",
+              "value": "={{ $('Loop Over Items').item.json.customer_id }}",
+              "type": "number"
+            },
+            {
+              "id": "f6002ef7-3f81-4430-9873-c5c8b6eb9638",
+              "name": "zd_id",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.id }}",
+              "type": "number"
+            },
+            {
+              "id": "98709374-7bbc-4382-8246-6346106f15c0",
+              "name": "cs_email",
+              "value": "={{ $('Loop Over Items').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "84146062-3291-4d8a-938e-1e6da37c3bd0",
+              "name": "matching",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items.length == 1 ? 'success' : $('Zendesk: Search by Email').item.json.body.items.length > 1 ? 'unclear' : 'failed' }}",
+              "type": "string"
+            },
+            {
+              "id": "466bf40d-b6b4-4606-ad80-42d5f5ac86ca",
+              "name": "cs_type",
+              "value": "={{ $('Loop Over Items').item.json.customer_type_name == 'Klant' ? 'customer' : 'business' }}",
+              "type": "string"
+            },
+            {
+              "id": "cc417eb7-c56d-4837-8d72-a10b7ab59fe9",
+              "name": "zd_type",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.contact_id ? \"business\" : \"customer\" }}",
+              "type": "string"
+            },
+            {
+              "id": "1726a44a-861c-4387-ac59-35b9b67468f1",
+              "name": "cs_first",
+              "value": "={{ $('Loop Over Items').item.json.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "88ff5956-b395-452a-9c59-2f7b23fc4b4a",
+              "name": "zd_first",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "fcf77e0b-6951-40a6-a2f9-98e91c03cd59",
+              "name": "cs_middle",
+              "value": "={{ $('Loop Over Items').item.json.insertion }}",
+              "type": "string"
+            },
+            {
+              "id": "f0190c6f-6060-4b7f-ae64-55798833b01b",
+              "name": "cs_last",
+              "value": "={{ $('Loop Over Items').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "45a83ce8-f70b-4454-ba15-a095df70b658",
+              "name": "zd_last",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ba79e73d-8bac-450f-9647-ea86de9af5ec",
+              "name": "cs_street",
+              "value": "={{ $('Loop Over Items').item.json.street }}",
+              "type": "string"
+            },
+            {
+              "id": "60d868a0-ddcf-41d4-9f0e-64da566892fc",
+              "name": "zd_line1",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.address.line1 }}",
+              "type": "string"
+            },
+            {
+              "id": "abbcd674-d67d-44bb-aad8-d2ce6eaefe59",
+              "name": "cs_house_no",
+              "value": "={{ $('Loop Over Items').item.json.house_number }}",
+              "type": "string"
+            },
+            {
+              "id": "49629b7b-9cdd-47ac-ae3b-48a1fd7dbf95",
+              "name": "cs_zip",
+              "value": "={{ $('Loop Over Items').item.json.postcode }}",
+              "type": "string"
+            },
+            {
+              "id": "92f682a1-4a29-4538-8616-84f9f857a3d8",
+              "name": "zd_zip",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.address.postal_code }}",
+              "type": "string"
+            },
+            {
+              "id": "2bfa8707-bdf2-4147-8fde-78e83d9bbeab",
+              "name": "cs_city",
+              "value": "={{ $('Loop Over Items').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "3771f409-c3e0-4a16-8f56-3502ad15707b",
+              "name": "zd_city",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.address.city }}",
+              "type": "string"
+            },
+            {
+              "id": "2b99830d-8a2f-4ec1-aa15-089d3941bd26",
+              "name": "cs_country",
+              "value": "={{ $('Loop Over Items').item.json.country_code_iso_3166 }}",
+              "type": "string"
+            },
+            {
+              "id": "96ac681b-a0a9-43ce-831e-9b7a2d57d333",
+              "name": "zd_country",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.address.country }}",
+              "type": "string"
+            },
+            {
+              "id": "7c3c83b7-de71-40f3-98e4-e0abfc0c3c02",
+              "name": "cs_company_name",
+              "value": "={{ $('Loop Over Items').item.json.company_name }}",
+              "type": "string"
+            },
+            {
+              "id": "96d7c643-c022-4742-854a-3b2429ed630c",
+              "name": "zd_company_name",
+              "value": "={{ $json.company_name || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "75464513-c174-4b8e-89a2-1454bb5c28a2",
+              "name": "cs_mobile",
+              "value": "={{ $('Loop Over Items').item.json.phone_numbers[0].phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "40771006-d5a4-4c9b-97e6-4bf19a1ba9b3",
+              "name": "zd_mobile",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "d7b2ff50-99ad-4a0b-9518-dfa88a9c1d73",
+              "name": "cs_phone",
+              "value": "={{ $('Loop Over Items').item.json.phone_numbers[1].phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "f7ed1714-0fd1-4d11-913b-786f8cf1a0a1",
+              "name": "zd_phone",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "6f262c08-f817-4ff6-873a-3aaffe4097b1",
+              "name": "zd_company_id",
+              "value": "={{ $('Zendesk: Search by Email').item.json.body.items[0].data.contact_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2624,
+        528
+      ],
+      "id": "e310a88c-44d1-456e-b31d-7f037cb52503",
+      "name": "Prepare fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "26234167-6271-45eb-b676-d6704d65a209",
+              "leftValue": "={{ $json.error.status }}",
+              "rightValue": 404,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        352
+      ],
+      "id": "a21bac3c-554c-49ad-9a2a-17358b9f6a1e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        240
+      ],
+      "id": "0f34198f-d0fc-4b91-9733-ac4b93584f34",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "offset",
+              "value": "={{ $('next').item.json.offset + 500 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $('next').item.json.data.concat($json.customers) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        448
+      ],
+      "id": "f6a979b9-36ec-4685-9d89-8478215e49a6",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "offset",
+              "value": "={{ $json.offset || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        144,
+        352
+      ],
+      "id": "81e841a1-bdc8-498a-8aad-23013de5c1ba",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        240
+      ],
+      "id": "eba7950d-7e3c-467e-9410-93f446d3b9fa",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/contacts/{{ $json.body.items[0].data.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        224
+      ],
+      "id": "3e758328-33ca-498a-98d1-a6f9d475b217",
+      "name": "Zendesk: Get linked company",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "576ceac9-e192-406f-8a53-943f2f6d2106",
+              "leftValue": "={{ $json.body.items[0].data.contact_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1920,
+        320
+      ],
+      "id": "816372bd-3a31-4cc4-a37c-4c6ec245fcf6",
+      "name": "If linked to company"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "184e4e3a-3e69-4060-89f3-7a57a08cee6e",
+              "name": "company_name",
+              "value": "={{ $json.body.data.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2384,
+        224
+      ],
+      "id": "d1994124-9a57-4287-9141-d7ef2409103f",
+      "name": "Get company name"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const csFirst = $input.item.json.cs_first || '';\nconst zdFirst = $input.item.json.zd_first || '';\nconst csLast = $input.item.json.converted_last || '';\nconst zdLast = $input.item.json.zd_last || '';\nconst csStreet = $input.item.json.cs_street || '';\nconst zdStreet = $input.item.json.converted_street || '';\nconst csHouseNo = $input.item.json.cs_house_no || '';\nconst zdHouseNo = $input.item.json.converted_house_no || '';\nconst csZip = $input.item.json.cs_zip || '';\nconst zdZip = $input.item.json.zd_zip || '';\nconst csCity = $input.item.json.cs_city || '';\nconst zdCity = $input.item.json.zd_city || '';\nconst csCountry = $input.item.json.converted_country || '';\nconst zdCountry = $input.item.json.zd_country || '';\nconst csCompany = $input.item.json.cs_company_name || '';\nconst zdCompany = $input.item.json.zd_company_name || '';\nconst csMobile = $input.item.json.cs_mobile || '';\nconst zdMobile = $input.item.json.zd_mobile || '';\nconst csPhone = $input.item.json.cs_phone || '';\nconst zdPhone = $input.item.json.zd_phone || '';\nconst csType = $input.item.json.cs_type || '';\nconst zdType = $input.item.json.zd_type || '';\n\nconst choiceFirst = (!csFirst && !zdFirst) ? 'empty'\n  : csFirst === zdFirst ? 'identical'\n  : !csFirst ? 'ZD'\n  : !zdFirst ? 'CS'\n  : (csFirst.length <= 2 && csFirst.length < zdFirst.length) ? 'ZD'\n  : (zdFirst.length <= 2 && zdFirst.length < csFirst.length) ? 'CS'\n  : 'unknown';\n\nconst choiceLast = (!csLast && !zdLast) ? 'empty'\n  : csLast === zdLast ? 'identical'\n  : !csLast ? 'ZD'\n  : !zdLast ? 'CS'\n  : (csLast.length <= 2 && csLast.length < zdLast.length) ? 'ZD'\n  : (zdLast.length <= 2 && zdLast.length < csLast.length) ? 'CS'\n  : 'unknown';\n\nconst choiceStreet = (!csStreet && !zdStreet) ? 'empty' \n  : csStreet === zdStreet ? 'identical'\n  : !csStreet ? 'ZD'\n  : !zdStreet ? 'CS'\n  : 'unknown';\n\nconst choiceHouseNo = (!csHouseNo && !zdHouseNo) ? 'empty' \n  : csHouseNo === zdHouseNo ? 'identical'\n  : !csHouseNo ? 'ZD'\n  : !zdHouseNo ? 'CS'\n  : 'unknown';\n\nconst choiceZip = (!csZip && !zdZip) ? 'empty' \n  : csZip === zdZip ? 'identical'\n  : !csZip ? 'ZD'\n  : !zdZip ? 'CS'\n  : 'unknown';\n\nconst choiceCity = (!csCity && !zdCity) ? 'empty' \n  : csCity === zdCity ? 'identical'\n  : !csCity ? 'ZD'\n  : !zdCity ? 'CS'\n  : 'unknown';\n\nconst choiceCountry = (csCountry === 'UNKNOWN') ? 'unknown'\n  : (!csCountry && !zdCountry) ? 'empty' \n  : csCountry === zdCountry ? 'identical'\n  : !csCountry ? 'ZD'\n  : !zdCountry ? 'CS'\n  : 'unknown';\n\nconst choiceCompany = (!csCompany && !zdCompany) ? 'empty' \n  : csCompany === zdCompany ? 'identical'\n  : !csCompany ? 'ZD'\n  : !zdCompany ? 'CS'\n  : 'unknown';\n\nconst choiceMobile = (!csMobile && !zdMobile) ? 'empty'\n  : csMobile === zdMobile ? 'identical'\n  : !csMobile ? 'ZD'\n  : !zdMobile ? 'CS'\n  : 'unknown';\n\nconst choicePhone = (!csPhone && !zdPhone) ? 'empty'\n  : csPhone === zdPhone ? 'identical'\n  : !csPhone ? 'ZD'\n  : !zdPhone ? 'CS'\n  : 'unknown';\n\nconst choiceType = (!csType && !zdType) ? 'empty'\n  : csType === zdType ? 'identical'\n  : 'unknown';\n\nconst csSwapPhones = csPhone && zdMobile ? csPhone === zdMobile : false;\n\nreturn {\n  json: {\n    Id: $input.item.json.Id,\n    choice_first: choiceFirst,\n    choice_last: choiceLast,\n    choice_street: choiceStreet,\n    choice_house_no: choiceHouseNo,\n    choice_zip: choiceZip,\n    choice_city: choiceCity,\n    choice_country: choiceCountry,\n    choice_company: choiceCompany,\n    choice_mobile: choiceMobile,\n    choice_phone: choicePhone,\n    choice_type: choiceType,\n    cs_swap_phones: csSwapPhones\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        1264
+      ],
+      "id": "e5ed8971-040f-4092-8a36-56cdd785eea2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d92aae10-c426-4777-9f2c-e10aebf9ff97",
+              "name": "cs_converted_last",
+              "value": "={{ $json.cs_middle ? $json.cs_middle + \" \" : \"\" }}{{ $json.cs_last }}",
+              "type": "string"
+            },
+            {
+              "id": "d92c4a6c-e7ca-4208-a54c-710ce00bb67d",
+              "name": "zd_converted_street",
+              "value": "={{ $json.zd_line1 ? \n   ($json.zd_line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || $json.zd_line1) \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "65488c62-f943-478b-9fdd-7adf0c50d342",
+              "name": "zd_converted_house_no",
+              "value": "={{ $json.zd_line1 ? \n   ($json.zd_line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || \"\") \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "3b72d5dc-1e5a-4d8d-bf25-3e3bdabf6db1",
+              "name": "cs_converted_country",
+              "value": "={{ ({\n    'AL': 'Albania',\n    'AD': 'Andorra',\n    'AT': 'Austria',\n    'BY': 'Belarus',\n    'BE': 'Belgium',\n    'BA': 'Bosnia and Herzegovina',\n    'BG': 'Bulgaria',\n    'HR': 'Croatia',\n    'CY': 'Cyprus',\n    'CZ': 'Czech Republic',\n    'DK': 'Denmark',\n    'EE': 'Estonia',\n    'FI': 'Finland',\n    'FR': 'France',\n    'DE': 'Deutschland',\n    'GR': 'Greece',\n    'HU': 'Hungary',\n    'IS': 'Iceland',\n    'IE': 'Ireland',\n    'IT': 'Italy',\n    'LV': 'Latvia',\n    'LI': 'Liechtenstein',\n    'LT': 'Lithuania',\n    'LU': 'Luxembourg',\n    'MT': 'Malta',\n    'MD': 'Moldova',\n    'MC': 'Monaco',\n    'ME': 'Montenegro',\n    'NL': 'Netherlands',\n    'MK': 'North Macedonia',\n    'NO': 'Norway',\n    'PL': 'Poland',\n    'PT': 'Portugal',\n    'RO': 'Romania',\n    'RU': 'Russia',\n    'SM': 'San Marino',\n    'RS': 'Serbia',\n    'SK': 'Slovakia',\n    'SI': 'Slovenia',\n    'ES': 'Spain',\n    'SE': 'Sweden',\n    'CH': 'Switzerland',\n    'UA': 'Ukraine',\n    'GB': 'United Kingdom',\n    'VA': 'Vatican City'\n})[$json.cs_country?.toUpperCase()] || 'UNKNOWN' }}",
+              "type": "string"
+            },
+            {
+              "id": "48f1c54f-c0c9-4966-b05b-76de23d2b288",
+              "name": "Id",
+              "value": "={{ $json.Id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        928
+      ],
+      "id": "768949b8-2e2c-4e56-b818-b5ed656eaf77",
+      "name": "Covert special fields"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        800,
+        1328
+      ],
+      "id": "6326672b-296b-4551-a5c5-9e284a328bc8",
+      "name": "Update a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "dataToSend": "autoMapInputData"
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        592,
+        928
+      ],
+      "id": "dfddfff7-459d-4ba9-94a6-aa5ff7683123",
+      "name": "Update a row1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Fill special fields (RESTARTABLE)\nConvert values between systems",
+        "height": 340,
+        "width": 860
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "2de868ca-b038-41e9-b40f-6878f0ac9393",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Compare sides and create suggestions (RESTARTABLE)",
+        "height": 380,
+        "width": 980
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1152
+      ],
+      "typeVersion": 1,
+      "id": "5bc54f09-2785-4533-9a3e-9b0024329661",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Copy relevant data to NocoDBand match sides by email",
+        "height": 760,
+        "width": 3060
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "66f896a7-4a17-4ba9-b546-99d30ae92dd0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $json.customer_id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        1824
+      ],
+      "id": "9477524f-1606-4981-b959-bb2169d2087a",
+      "name": "Cyclesoftware: Update contact",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/contacts/{{ $('Get matched contacts3').item.json.zd_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2064,
+        2512
+      ],
+      "id": "1b8eda28-55b4-440d-a9ee-e47bcdd1f71a",
+      "name": "Zendesk: Update contact1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 500,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        592,
+        1264
+      ],
+      "id": "582533da-5e2a-4da6-8698-f9b168de15c7",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "returnAll": true,
+        "options": {
+          "where": "(matching,eq,success)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        144,
+        1264
+      ],
+      "id": "3684b4cf-dccb-45df-aeb7-16992f7d7bae",
+      "name": "Get matched contacts1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "returnAll": true,
+        "options": {
+          "where": "(matching,eq,success)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        144,
+        928
+      ],
+      "id": "c25c5a1d-4062-4a22-bd26-3cd2e0ad5dbc",
+      "name": "Get matched contacts",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update CS based on suggestions (RESTARTABLE)\n# Before running, check if \"unknown\" matchings are resolved\n## If a matching cannot be resolved: Set to matching = unclear",
+        "height": 380,
+        "width": 1620
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1648
+      ],
+      "typeVersion": 1,
+      "id": "3485196c-f419-4fe2-ab72-06936679ebdc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Update ZD based on suggestions (RESTARTABLE)",
+        "height": 700,
+        "width": 2300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        2064
+      ],
+      "typeVersion": 1,
+      "id": "42c03a3f-fcc1-4355-85a6-da4277ca5e59",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# SKIP THIS FOR NOW!\nalso: set attn for companies not implemented yet\n## Copy unmatched contacts from ZD to CS (CONTINUABLE)\nThe matching table is based on CS, so entries which only exist in ZD so far, need to be copied over to CS once\nDuring that, the CS ID needs to be stored in ZD",
+        "height": 600,
+        "width": 3720,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        3344
+      ],
+      "typeVersion": 1,
+      "id": "5988758f-5f60-405e-bc59-41ef90d2ab9c",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "495a41a5-8502-47c1-9f5b-f3080401f804",
+              "leftValue": "={{ [1051,1057,1200,1205,1234,1111] }}",
+              "rightValue": "={{ $json['cs_id PROD'] }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        2192
+      ],
+      "id": "ccf13706-a27a-4b0e-bb10-fb6cf5e24293",
+      "name": "Filter2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"contact_id\": {{ $('Convert and apply suggestions1').item.json.type == 'business' ? $ifEmpty($('Get matched contacts3').item.json.zd_company_id, $json.id) : null }},\n    \"first_name\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.first, \"\") }}\",\n    \"last_name\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.last, \"<UNKNOWN>\") }}\",\n    \"email\": \"{{ $ifEmpty($('Get matched contacts3').item.json.cs_email, \"\") }}\",\n    \"is_organization\": false,\n    \"address\": {\n      \"city\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.city, \"\") }}\",\n      \"line1\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.line1, \"\") }}\",\n      \"postal_code\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.zip, \"\") }}\",\n      \"country\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.country, \"\") }}\"\n    },\n    \"mobile\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.mobile.length > 4 ? $('Convert and apply suggestions1').item.json.mobile : \"\", \"\") }}\",\n    \"phone\": \"{{ $ifEmpty($('Convert and apply suggestions1').item.json.phone.length > 4 ? $('Convert and apply suggestions1').item.json.phone : \"\", \"\") }}\",\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": \"{{ $ifEmpty($('Get matched contacts3').item.json.cs_id, \"\") }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        2512
+      ],
+      "id": "28003c80-7c45-4dba-a6d2-9eea4daab25b",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "returnAll": true,
+        "options": {
+          "where": "(matching,eq,success)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        112,
+        1824
+      ],
+      "id": "4395720d-2bff-423c-9fea-966679158be2",
+      "name": "Get matched contacts2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "returnAll": true,
+        "options": {
+          "where": "(matching,eq,success)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        112,
+        2448
+      ],
+      "id": "bd1b1a36-a57e-460b-92d0-2226544142d1",
+      "name": "Get matched contacts3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        3024
+      ],
+      "id": "3de41bf3-57b7-42eb-93f5-e88d15b64496",
+      "name": "Zendesk: Create contact",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"contact_id\": {{ $('Get unmatched contacts1').item.json.cs_type == 'business' ? $json.data.id : null }},\n    \"first_name\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.first, \"\") }}\",\n    \"last_name\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.last, \"<UNKNOWN>\") }}\",\n    \"email\": \"{{ $ifEmpty($('Get unmatched contacts1').item.json.cs_email, \"\") }}\",\n    \"is_organization\": false,\n    \"address\": {\n      \"city\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.city, \"\") }}\",\n      \"line1\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.line1, \"\") }}\",\n      \"postal_code\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.zip, \"\") }}\",\n      \"country\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.country, \"\") }}\"\n    },\n    \"mobile\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.mobile.length > 4 ? $('Convert CS to ZD').item.json.mobile : \"\", \"\") }}\",\n    \"phone\": \"{{ $ifEmpty($('Convert CS to ZD').item.json.phone.length > 4 ? $('Convert CS to ZD').item.json.phone : \"\", \"\") }}\",\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": \"{{ $('Get unmatched contacts1').item.json.cs_id }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1872,
+        3024
+      ],
+      "id": "c20f6257-f412-4091-80ed-be5c3c828052",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"name\": \"{{ $('Get unmatched contacts1').item.json.cs_company_name }}\",\n    \"is_organization\": true\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1648,
+        2928
+      ],
+      "id": "5184e716-3f8c-497e-b8de-52b3757a9f8e",
+      "name": "Create company1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "28f755eb-ffec-434e-a219-d8845a8da8a1",
+              "leftValue": "={{ $json.zd_import_completed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        3024
+      ],
+      "id": "661beaa3-561e-426f-b92e-82f37f61b795",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5cb2cafc-17a3-44f8-84a4-9f6114476186",
+              "leftValue": "={{ $('Get unmatched contacts1').item.json.cs_type }}",
+              "rightValue": "business",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        3024
+      ],
+      "id": "0c6a8eb5-a3c3-4972-a303-50818529b037",
+      "name": "If company1"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "returnAll": true,
+        "options": {
+          "where": "(matching,in,failed,unclear)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        112,
+        3024
+      ],
+      "id": "4c0517e4-82b7-4db1-9bbe-722dbe6cf31b",
+      "name": "Get unmatched contacts1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cyclesoftware.nl/api/v1/customers.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2992,
+        3712
+      ],
+      "id": "1c7935b5-b20a-4ee9-bd81-2838df8d0c76",
+      "name": "Cyclesoftware: Create contact1",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"customer_type_name\": \"{{ $('Filter1').item.json.data.contact_id != \"\" ? \"Zakelijk\" : \"Klant\" }}\",\n  \"postcode\": \"{{ $ifEmpty($('Filter1').item.json.data.address.postal_code, \"\") }}\",\n  \"house_number\": \"{{ $ifEmpty($json.house_no, \"\") }}\",\n  \"company_name\": \"{{ $ifEmpty($json.company_name, \"\") }}\",\n  \"first_name\": \"{{ $ifEmpty($('Filter1').item.json.data.first_name, \"\") }}\",\n  \"name\": \"{{ $ifEmpty($('Filter1').item.json.data.last_name, \"\") }}\",\n  \"street\": \"{{ $ifEmpty($json.street, \"\") }}\",\n  \"city\": \"{{ $ifEmpty($('Filter1').item.json.data.address.city, \"\") }}\",\n  \"country_code_iso_3166\": \"{{ $ifEmpty($json.country, \"\") }}\",\n  \"email\": \"{{ $ifEmpty($('Filter1').item.json.data.email, \"\") }}\",\n  \"phone_numbers\": [\n    {\n      \"phone_number_id\": \"mob\",\n      \"phone_number\": \"{{ $ifEmpty($('Filter1').item.json.data.mobile, \"\") }}\"\n    },\n    {\n      \"phone_number_id\": \"tel\",\n      \"phone_number\": \"{{ $ifEmpty($('Filter1').item.json.data.phone, \"\") }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2752,
+        3712
+      ],
+      "id": "b0be01dc-b3c7-4b31-8432-ab1c8af95ced",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## ToDo\n- [x] If phone number in CS 4 or less chars long, treat it as empty value\n- [ ] Add logging to new NocoDB table of each ID which has been modified in a system AND/OR just always a loop and a .2 s wait\n- [ ] Remove filters with test IDs\n- [ ] Run once with all items on testing environments and check if needs batching + subworkflows (cannot be run entirely since ID's are different on syndbox - or run capturing from there as well)\n- [ ] Update all NocoDB Table Ids in all nodes",
+        "height": 280,
+        "width": 520,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -656,
+        544
+      ],
+      "typeVersion": 1,
+      "id": "eb18d652-4e0d-4e4e-bbce-edea497823f5",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Create missing contacts in ZD (does not contain entries without a valid email)",
+        "height": 460,
+        "width": 2680
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        2800
+      ],
+      "typeVersion": 1,
+      "id": "b6fb1412-0cfe-427c-9f00-14991a93ca0c",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.company_name }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        2352
+      ],
+      "id": "7bed891f-f0eb-47dc-bacd-46b700e58530",
+      "name": "Zendesk: Search by company name",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a02daea3-d977-4edd-a446-4453234b565e",
+              "leftValue": "={{ $json.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        2240
+      ],
+      "id": "091c5c97-a4da-4690-91af-740515926672",
+      "name": "If company not found"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ed98890-f345-4e7e-ae0b-29cfa3dcace0",
+              "name": "id",
+              "value": "={{ $json.items[0].data.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1424,
+        2368
+      ],
+      "id": "0ca4508b-3663-4efb-a87d-7966c9a6d924",
+      "name": "Get company ID"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Define the target system (CS or ZD) here\nconst targetSystem = 'CS';\n\nfunction convertCountryCStoZD(csCountry) {\n  const countryMapping = {\n    'AL': 'Albania',\n    'AD': 'Andorra',\n    'AT': 'Austria',\n    'BY': 'Belarus',\n    'BE': 'Belgium',\n    'BA': 'Bosnia and Herzegovina',\n    'BG': 'Bulgaria',\n    'HR': 'Croatia',\n    'CY': 'Cyprus',\n    'CZ': 'Czech Republic',\n    'DK': 'Denmark',\n    'EE': 'Estonia',\n    'FI': 'Finland',\n    'FR': 'France',\n    'DE': 'Germany',\n    'GR': 'Greece',\n    'HU': 'Hungary',\n    'IS': 'Iceland',\n    'IE': 'Ireland',\n    'IT': 'Italy',\n    'LV': 'Latvia',\n    'LI': 'Liechtenstein',\n    'LT': 'Lithuania',\n    'LU': 'Luxembourg',\n    'MT': 'Malta',\n    'MD': 'Moldova',\n    'MC': 'Monaco',\n    'ME': 'Montenegro',\n    'NL': 'Netherlands',\n    'MK': 'North Macedonia',\n    'NO': 'Norway',\n    'PL': 'Poland',\n    'PT': 'Portugal',\n    'RO': 'Romania',\n    'RU': 'Russia',\n    'SM': 'San Marino',\n    'RS': 'Serbia',\n    'SK': 'Slovakia',\n    'SI': 'Slovenia',\n    'ES': 'Spain',\n    'SE': 'Sweden',\n    'CH': 'Switzerland',\n    'UA': 'Ukraine',\n    'GB': 'United Kingdom',\n    'VA': 'Vatican City'\n  };\n  return countryMapping[csCountry] || csCountry;\n}\n\nfunction convertCountryZDtoCS(zdCountry) {\n  const countryMapping = {\n    'Albania': 'AL',\n    'Andorra': 'AD',\n    'Austria': 'AT',\n    'Belarus': 'BY',\n    'Belgium': 'BE',\n    'Bosnia and Herzegovina': 'BA',\n    'Bulgaria': 'BG',\n    'Croatia': 'HR',\n    'Cyprus': 'CY',\n    'Czech Republic': 'CZ',\n    'Denmark': 'DK',\n    'Estonia': 'EE',\n    'Finland': 'FI',\n    'France': 'FR',\n    'Germany': 'DE',\n    'Greece': 'GR',\n    'Hungary': 'HU',\n    'Iceland': 'IS',\n    'Ireland': 'IE',\n    'Italy': 'IT',\n    'Latvia': 'LV',\n    'Liechtenstein': 'LI',\n    'Lithuania': 'LT',\n    'Luxembourg': 'LU',\n    'Malta': 'MT',\n    'Moldova': 'MD',\n    'Monaco': 'MC',\n    'Montenegro': 'ME',\n    'Netherlands': 'NL',\n    'North Macedonia': 'MK',\n    'Norway': 'NO',\n    'Poland': 'PL',\n    'Portugal': 'PT',\n    'Romania': 'RO',\n    'Russia': 'RU',\n    'San Marino': 'SM',\n    'Serbia': 'RS',\n    'Slovakia': 'SK',\n    'Slovenia': 'SI',\n    'Spain': 'ES',\n    'Sweden': 'SE',\n    'Switzerland': 'CH',\n    'Ukraine': 'UA',\n    'United Kingdom': 'GB',\n    'Vatican City': 'VA'\n  };\n  return countryMapping[zdCountry] || zdCountry;\n}\n\nfunction splitZDLine1(line1) {\n  if (!line1) return { street: '', house_no: '' };\n  \n  const streetMatch = line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || line1;\n  const houseNoMatch = line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || '';\n  \n  return {\n    street: streetMatch,\n    house_no: houseNoMatch\n  };\n}\n\nfunction combineCStoLine1(street, houseNo) {\n  if (!street && !houseNo) return '';\n  return `${street} ${houseNo}`.trim();\n}\n\nfunction processItem(item) {\n  let result = {};\n\n  if (targetSystem === 'CS') {\n    result = {\n      id: item.cs_id || '',\n      first: (item.choice_first === 'ZD' || (item.choice_first === 'identical' && item.zd_first)) ? item.zd_first : (item.cs_first || ''),\n      last: (item.choice_last === 'ZD' || (item.choice_last === 'identical' && item.zd_last)) ? \n        `${item.zd_middle || ''} ${item.zd_last || ''}`.trim() : (item.cs_last || ''),\n      email: item.cs_email || '',\n      middle: item.cs_middle || '',\n      street: (item.choice_street === 'ZD' || (item.choice_street === 'identical' && item.zd_line1)) ? \n        splitZDLine1(item.zd_line1).street : (item.cs_street || ''),\n      house_no: (item.choice_house_no === 'ZD' || (item.choice_house_no === 'identical' && item.zd_line1)) ? \n        splitZDLine1(item.zd_line1).house_no : (item.cs_house_no || ''),\n      city: (item.choice_city === 'ZD' || (item.choice_city === 'identical' && item.zd_city)) ? item.zd_city : (item.cs_city || ''),\n      country: (item.choice_country === 'ZD' || (item.choice_country === 'identical' && item.zd_country)) ? \n        convertCountryZDtoCS(item.zd_country) : (item.cs_country || ''),\n      zip: (item.choice_zip === 'ZD' || (item.choice_zip === 'identical' && item.zd_zip)) ? item.zd_zip : (item.cs_zip || ''),\n      type: (item.choice_type === 'ZD' || (item.choice_type === 'identical' && item.zd_type)) ? \n        item.zd_type : (item.cs_type || ''),\n      company_name: (item.choice_company === 'ZD' || (item.choice_company === 'identical' && item.zd_company_name)) ? \n        item.zd_company_name : (item.cs_company_name || ''),\n      mobile: (item.choice_mobile === 'ZD' || (item.choice_mobile === 'identical' && item.zd_mobile)) ? \n        item.zd_mobile : (item.cs_mobile || ''),\n      phone: (item.choice_phone === 'ZD' || (item.choice_phone === 'identical' && item.zd_phone)) ? \n        item.zd_phone : (item.cs_phone || '')\n    };\n  } else {\n    result = {\n      id: item.zd_id || '',\n      first: (item.choice_first === 'CS' || (item.choice_first === 'identical' && item.cs_first)) ? item.cs_first : (item.zd_first || ''),\n      last: (item.choice_last === 'CS' || (item.choice_last === 'identical' && item.cs_last)) ? item.cs_last : (item.zd_last || ''),\n      line1: (item.choice_street === 'CS' || item.choice_house_no === 'CS' || \n                ((item.choice_street === 'identical' || item.choice_house_no === 'identical') && \n                (item.cs_street || item.cs_house_no))) ? \n        combineCStoLine1(item.cs_street, item.cs_house_no) : (item.zd_line1 || ''),\n      city: (item.choice_city === 'CS' || (item.choice_city === 'identical' && item.cs_city)) ? item.cs_city : (item.zd_city || ''),\n      country: (item.choice_country === 'CS' || (item.choice_country === 'identical' && item.cs_country)) ? \n        convertCountryCStoZD(item.cs_country) : (item.zd_country || ''),\n      zip: (item.choice_zip === 'CS' || (item.choice_zip === 'identical' && item.cs_zip)) ? item.cs_zip : (item.zd_zip || ''),\n      type: (item.choice_type === 'CS' || (item.choice_type === 'identical' && item.cs_type)) ? \n        item.cs_type : (item.zd_type || ''),\n      company_name: (item.choice_company === 'CS' || (item.choice_company === 'identical' && item.cs_company_name)) ? \n        item.cs_company_name : (item.zd_company_name || ''),\n      mobile: (item.choice_mobile === 'CS' || (item.choice_mobile === 'identical' && item.cs_mobile)) ? \n        item.cs_mobile : (item.zd_mobile || ''),\n      phone: (item.choice_phone === 'CS' || (item.choice_phone === 'identical' && item.cs_phone)) ? \n        item.cs_phone : (item.zd_phone || '')\n    };\n  }\n\n  return result;\n}\n\n// Process the current item\nreturn processItem($input.item.json);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        1824
+      ],
+      "id": "7d3a96c3-bd24-470b-bfda-db4c5036cbae",
+      "name": "Convert and apply suggestions"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "495a41a5-8502-47c1-9f5b-f3080401f804",
+              "leftValue": "={{ [1051,1057,1200,1205,1234,1111] }}",
+              "rightValue": "={{ $json['cs_id PROD'] }}",
+              "operator": {
+                "type": "array",
+                "operation": "contains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        1824
+      ],
+      "id": "d10c9128-9b3e-4f23-ba7e-2855d110894e",
+      "name": "Filter",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"customer_id\": {{ $json.id }},\n  \"customer_type_name\": \"{{ $json.type == 'business' ? \"Zakelijk\" : \"Klant\" }}\",\n  \"postcode\": \"{{ $json.zip }}\",\n  \"house_number\": \"{{ $json.house_no }}\",\n  \"company_name\": \"{{ $json.company_name }}\",\n  \"insertion\": \"\",\n  \"first_name\": \"{{ $json.first }}\",\n  \"name\": \"{{ $json.last }}\",\n  \"street\": \"{{ $json.street }}\",\n  \"city\": \"{{ $json.city }}\",\n  \"country_code_iso_3166\": \"{{ $json.country }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone_numbers\": [\n    {\n      \"phone_number_id\": \"mob\",\n      \"phone_number\": \"{{ $json.mobile }}\"\n    },\n    {\n      \"phone_number_id\": \"tel\",\n      \"phone_number\": \"{{ $json.phone }}\"\n    }\n  ]\n  {{ $if($json.type == \"business\", ', \"attn\": \"' + $json.first + ' ' + $json.last + '\"', \"\") }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        1824
+      ],
+      "id": "f3d7fc65-11aa-4ff9-af01-fd93dad171a1",
+      "name": "Prepare Request"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Define the target system (CS or ZD) here\nconst targetSystem = 'ZD';\n\nfunction convertCountryCStoZD(csCountry) {\n  const countryMapping = {\n    'AL': 'Albania',\n    'AD': 'Andorra',\n    'AT': 'Austria',\n    'BY': 'Belarus',\n    'BE': 'Belgium',\n    'BA': 'Bosnia and Herzegovina',\n    'BG': 'Bulgaria',\n    'HR': 'Croatia',\n    'CY': 'Cyprus',\n    'CZ': 'Czech Republic',\n    'DK': 'Denmark',\n    'EE': 'Estonia',\n    'FI': 'Finland',\n    'FR': 'France',\n    'DE': 'Germany',\n    'GR': 'Greece',\n    'HU': 'Hungary',\n    'IS': 'Iceland',\n    'IE': 'Ireland',\n    'IT': 'Italy',\n    'LV': 'Latvia',\n    'LI': 'Liechtenstein',\n    'LT': 'Lithuania',\n    'LU': 'Luxembourg',\n    'MT': 'Malta',\n    'MD': 'Moldova',\n    'MC': 'Monaco',\n    'ME': 'Montenegro',\n    'NL': 'Netherlands',\n    'MK': 'North Macedonia',\n    'NO': 'Norway',\n    'PL': 'Poland',\n    'PT': 'Portugal',\n    'RO': 'Romania',\n    'RU': 'Russia',\n    'SM': 'San Marino',\n    'RS': 'Serbia',\n    'SK': 'Slovakia',\n    'SI': 'Slovenia',\n    'ES': 'Spain',\n    'SE': 'Sweden',\n    'CH': 'Switzerland',\n    'UA': 'Ukraine',\n    'GB': 'United Kingdom',\n    'VA': 'Vatican City'\n  };\n  return countryMapping[csCountry] || csCountry;\n}\n\nfunction convertCountryZDtoCS(zdCountry) {\n  const countryMapping = {\n    'Albania': 'AL',\n    'Andorra': 'AD',\n    'Austria': 'AT',\n    'Belarus': 'BY',\n    'Belgium': 'BE',\n    'Bosnia and Herzegovina': 'BA',\n    'Bulgaria': 'BG',\n    'Croatia': 'HR',\n    'Cyprus': 'CY',\n    'Czech Republic': 'CZ',\n    'Denmark': 'DK',\n    'Estonia': 'EE',\n    'Finland': 'FI',\n    'France': 'FR',\n    'Germany': 'DE',\n    'Greece': 'GR',\n    'Hungary': 'HU',\n    'Iceland': 'IS',\n    'Ireland': 'IE',\n    'Italy': 'IT',\n    'Latvia': 'LV',\n    'Liechtenstein': 'LI',\n    'Lithuania': 'LT',\n    'Luxembourg': 'LU',\n    'Malta': 'MT',\n    'Moldova': 'MD',\n    'Monaco': 'MC',\n    'Montenegro': 'ME',\n    'Netherlands': 'NL',\n    'North Macedonia': 'MK',\n    'Norway': 'NO',\n    'Poland': 'PL',\n    'Portugal': 'PT',\n    'Romania': 'RO',\n    'Russia': 'RU',\n    'San Marino': 'SM',\n    'Serbia': 'RS',\n    'Slovakia': 'SK',\n    'Slovenia': 'SI',\n    'Spain': 'ES',\n    'Sweden': 'SE',\n    'Switzerland': 'CH',\n    'Ukraine': 'UA',\n    'United Kingdom': 'GB',\n    'Vatican City': 'VA'\n  };\n  return countryMapping[zdCountry] || zdCountry;\n}\n\nfunction splitZDLine1(line1) {\n  if (!line1) return { street: '', house_no: '' };\n  \n  const streetMatch = line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || line1;\n  const houseNoMatch = line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || '';\n  \n  return {\n    street: streetMatch,\n    house_no: houseNoMatch\n  };\n}\n\nfunction combineCStoLine1(street, houseNo) {\n  if (!street && !houseNo) return '';\n  return `${street} ${houseNo}`.trim();\n}\n\nfunction processItem(item) {\n  let result = {};\n\n  if (targetSystem === 'CS') {\n    result = {\n      id: item.cs_id || '',\n      first: (item.choice_first === 'ZD' || (item.choice_first === 'identical' && item.zd_first)) ? item.zd_first : (item.cs_first || ''),\n      last: (item.choice_last === 'ZD' || (item.choice_last === 'identical' && item.zd_last)) ? \n        `${item.zd_middle || ''} ${item.zd_last || ''}`.trim() : (item.cs_last || ''),\n      email: item.cs_email || '',\n      middle: item.cs_middle || '',\n      street: (item.choice_street === 'ZD' || (item.choice_street === 'identical' && item.zd_line1)) ? \n        splitZDLine1(item.zd_line1).street : (item.cs_street || ''),\n      house_no: (item.choice_house_no === 'ZD' || (item.choice_house_no === 'identical' && item.zd_line1)) ? \n        splitZDLine1(item.zd_line1).house_no : (item.cs_house_no || ''),\n      city: (item.choice_city === 'ZD' || (item.choice_city === 'identical' && item.zd_city)) ? item.zd_city : (item.cs_city || ''),\n      country: (item.choice_country === 'ZD' || (item.choice_country === 'identical' && item.zd_country)) ? \n        convertCountryZDtoCS(item.zd_country) : (item.cs_country || ''),\n      zip: (item.choice_zip === 'ZD' || (item.choice_zip === 'identical' && item.zd_zip)) ? item.zd_zip : (item.cs_zip || ''),\n      type: (item.choice_type === 'ZD' || (item.choice_type === 'identical' && item.zd_type)) ? \n        item.zd_type : (item.cs_type || ''),\n      company_name: (item.choice_company === 'ZD' || (item.choice_company === 'identical' && item.zd_company_name)) ? \n        item.zd_company_name : (item.cs_company_name || ''),\n      mobile: (item.choice_mobile === 'ZD' || (item.choice_mobile === 'identical' && item.zd_mobile)) ? \n        item.zd_mobile : (item.cs_mobile || ''),\n      phone: (item.choice_phone === 'ZD' || (item.choice_phone === 'identical' && item.zd_phone)) ? \n        item.zd_phone : (item.cs_phone || '')\n    };\n  } else {\n    result = {\n      id: item.zd_id || '',\n      first: (item.choice_first === 'CS' || (item.choice_first === 'identical' && item.cs_first)) ? item.cs_first : (item.zd_first || ''),\n      last: (item.choice_last === 'CS' || (item.choice_last === 'identical' && item.cs_last)) ? item.cs_last : (item.zd_last || ''),\n      line1: (item.choice_street === 'CS' || item.choice_house_no === 'CS' || \n                ((item.choice_street === 'identical' || item.choice_house_no === 'identical') && \n                (item.cs_street || item.cs_house_no))) ? \n        combineCStoLine1(item.cs_street, item.cs_house_no) : (item.zd_line1 || ''),\n      city: (item.choice_city === 'CS' || (item.choice_city === 'identical' && item.cs_city)) ? item.cs_city : (item.zd_city || ''),\n      country: (item.choice_country === 'CS' || (item.choice_country === 'identical' && item.cs_country)) ? \n        convertCountryCStoZD(item.cs_country) : (item.zd_country || ''),\n      zip: (item.choice_zip === 'CS' || (item.choice_zip === 'identical' && item.cs_zip)) ? item.cs_zip : (item.zd_zip || ''),\n      type: (item.choice_type === 'CS' || (item.choice_type === 'identical' && item.cs_type)) ? \n        item.cs_type : (item.zd_type || ''),\n      company_name: (item.choice_company === 'CS' || (item.choice_company === 'identical' && item.cs_company_name)) ? \n        item.cs_company_name : (item.zd_company_name || ''),\n      mobile: (item.choice_mobile === 'CS' || (item.choice_mobile === 'identical' && item.cs_mobile)) ? \n        item.cs_mobile : (item.zd_mobile || ''),\n      phone: (item.choice_phone === 'CS' || (item.choice_phone === 'identical' && item.cs_phone)) ? \n        item.cs_phone : (item.zd_phone || '')\n    };\n  }\n\n  return result;\n}\n\n// Process the current item\nreturn processItem($input.item.json);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        2448
+      ],
+      "id": "5a682da5-83c1-4021-a632-7984551c9c7b",
+      "name": "Convert and apply suggestions1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5cb2cafc-17a3-44f8-84a4-9f6114476186",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "business",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "eb4f386a-e664-4d14-b3a1-2adebb72c6a5",
+              "leftValue": "={{ $('Get matched contacts3').item.json.zd_company_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        2448
+      ],
+      "id": "a5b9afd0-335d-4890-b3b7-03731f66e3f2",
+      "name": "If company without a known ZD ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "082bb90a-198b-4aa9-a59b-4fba54836ec8",
+              "leftValue": "={{ $('Get matched contacts3').item.json.zd_company_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "31afb0af-73ba-4663-b084-e04062bbd558",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "business",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        2544
+      ],
+      "id": "9394a292-de7e-45a4-902f-b4eab0b9713c",
+      "name": "Only for known company IDs"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "63e31b26-6ac2-4c70-b9f5-24bef34f5bf0",
+              "name": "id",
+              "value": "={{ $json.data.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1664,
+        2144
+      ],
+      "id": "b190874f-9aea-4b02-b19a-bc0d36501c72",
+      "name": "Get company ID1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/contacts/{{ $('Get matched contacts3').item.json.zd_company_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"name\": \"{{ $json.company_name }}\",\n    \"is_organization\": true\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        2544
+      ],
+      "id": "a4e06892-a926-473d-9f16-b1f2b759ac30",
+      "name": "Zendesk: Update company",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        3600
+      ],
+      "id": "42bb1bf0-3c3e-4da5-9b03-17b62e1d52da",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "content": "Paginate until all timestamps found are older then previously stored one",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        48,
+        3552
+      ],
+      "typeVersion": 1,
+      "id": "e4c09092-909a-42f1-9c5d-2153e9c68de0",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a1c94ef-d080-4a20-bcb6-7ba12375a405",
+              "leftValue": "={{ $('Zendesk: Get contacts').item.json.body.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        3600
+      ],
+      "id": "048b1f20-9e09-473d-9734-165571f8e32e",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge1').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        3600
+      ],
+      "id": "8a649e6a-8827-48c2-a264-01941e35ebc6",
+      "name": "Result1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "page",
+              "value": "={{ $('next1').item.json.page + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $('next1').item.json.data.concat($json.body.items) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        3600
+      ],
+      "id": "0d5596f7-7bcc-467b-9e91-5ff80e280027",
+      "name": "merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "page",
+              "value": "={{ $json.page || 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        3600
+      ],
+      "id": "d8204a43-c66e-4049-8c9d-891f34c29163",
+      "name": "next1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "af684076-4101-4615-b573-f55639b6c2c1",
+              "leftValue": "={{ $('Get unmatched contacts1').item.json.cs_company_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        2928
+      ],
+      "id": "8ef7aedb-7d8d-42da-9099-adc94ddd1705",
+      "name": "Skip empty company names"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "98e7e677-9bd5-4e1f-8257-c400ec8c39b2",
+              "leftValue": "={{ $json.cs_last }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        3024
+      ],
+      "id": "7890bb47-d65c-4d76-8504-52baec80ff5e",
+      "name": "Skip empty last names"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"name\": \"{{ $('Convert and apply suggestions1').item.json.company_name }}\",\n    \"is_organization\": true\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1424,
+        2144
+      ],
+      "id": "02fa90f1-1c91-4b64-bd45-5fb243cf38cf",
+      "name": "Zendesk: Create company",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        1824
+      ],
+      "id": "5a2f79a7-8222-4b16-8faa-7565d4266b6e",
+      "name": "Wait6",
+      "webhookId": "172cca0d-fdec-4412-bae9-033af71f8aaf"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        304,
+        1824
+      ],
+      "id": "d2080e2a-fd1f-4c66-9345-ea8c1e307e14",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/contacts/{{ $json.data.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2112,
+        3504
+      ],
+      "id": "5329c100-844d-4c1f-a639-6dc4ef10ecd9",
+      "name": "Zendesk: Get linked company1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "576ceac9-e192-406f-8a53-943f2f6d2106",
+              "leftValue": "={{ $json.data.contact_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        3600
+      ],
+      "id": "9146fb27-a9d1-4cbb-9aca-f5a93b3b2d51",
+      "name": "If linked to company1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "184e4e3a-3e69-4060-89f3-7a57a08cee6e",
+              "name": "company_name",
+              "value": "={{ $json.body.data.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        3504
+      ],
+      "id": "6a1345c9-cfef-4a13-b7ad-50ff89453b14",
+      "name": "Get company name1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "is_organization",
+              "value": "false"
+            },
+            {
+              "name": "page",
+              "value": "={{ $json.page }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        3600
+      ],
+      "id": "f901bb67-c9d7-4dd1-bc00-c79fbf9fb17f",
+      "name": "Zendesk: Get contacts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Define the target system (CS or ZD) here\nconst targetSystem = 'ZD';\n\nfunction convertCountryCStoZD(csCountry) {\n  const countryMapping = {\n    'AL': 'Albania',\n    'AD': 'Andorra',\n    'AT': 'Austria',\n    'BY': 'Belarus',\n    'BE': 'Belgium',\n    'BA': 'Bosnia and Herzegovina',\n    'BG': 'Bulgaria',\n    'HR': 'Croatia',\n    'CY': 'Cyprus',\n    'CZ': 'Czech Republic',\n    'DK': 'Denmark',\n    'EE': 'Estonia',\n    'FI': 'Finland',\n    'FR': 'France',\n    'DE': 'Germany',\n    'GR': 'Greece',\n    'HU': 'Hungary',\n    'IS': 'Iceland',\n    'IE': 'Ireland',\n    'IT': 'Italy',\n    'LV': 'Latvia',\n    'LI': 'Liechtenstein',\n    'LT': 'Lithuania',\n    'LU': 'Luxembourg',\n    'MT': 'Malta',\n    'MD': 'Moldova',\n    'MC': 'Monaco',\n    'ME': 'Montenegro',\n    'NL': 'Netherlands',\n    'MK': 'North Macedonia',\n    'NO': 'Norway',\n    'PL': 'Poland',\n    'PT': 'Portugal',\n    'RO': 'Romania',\n    'RU': 'Russia',\n    'SM': 'San Marino',\n    'RS': 'Serbia',\n    'SK': 'Slovakia',\n    'SI': 'Slovenia',\n    'ES': 'Spain',\n    'SE': 'Sweden',\n    'CH': 'Switzerland',\n    'UA': 'Ukraine',\n    'GB': 'United Kingdom',\n    'VA': 'Vatican City'\n  };\n  return countryMapping[csCountry] || csCountry;\n}\n\nfunction convertCountryZDtoCS(zdCountry) {\n  const countryMapping = {\n    'Albania': 'AL',\n    'Andorra': 'AD',\n    'Austria': 'AT',\n    'Belarus': 'BY',\n    'Belgium': 'BE',\n    'Bosnia and Herzegovina': 'BA',\n    'Bulgaria': 'BG',\n    'Croatia': 'HR',\n    'Cyprus': 'CY',\n    'Czech Republic': 'CZ',\n    'Denmark': 'DK',\n    'Estonia': 'EE',\n    'Finland': 'FI',\n    'France': 'FR',\n    'Germany': 'DE',\n    'Greece': 'GR',\n    'Hungary': 'HU',\n    'Iceland': 'IS',\n    'Ireland': 'IE',\n    'Italy': 'IT',\n    'Latvia': 'LV',\n    'Liechtenstein': 'LI',\n    'Lithuania': 'LT',\n    'Luxembourg': 'LU',\n    'Malta': 'MT',\n    'Moldova': 'MD',\n    'Monaco': 'MC',\n    'Montenegro': 'ME',\n    'Netherlands': 'NL',\n    'North Macedonia': 'MK',\n    'Norway': 'NO',\n    'Poland': 'PL',\n    'Portugal': 'PT',\n    'Romania': 'RO',\n    'Russia': 'RU',\n    'San Marino': 'SM',\n    'Serbia': 'RS',\n    'Slovakia': 'SK',\n    'Slovenia': 'SI',\n    'Spain': 'ES',\n    'Sweden': 'SE',\n    'Switzerland': 'CH',\n    'Ukraine': 'UA',\n    'United Kingdom': 'GB',\n    'Vatican City': 'VA'\n  };\n  return countryMapping[zdCountry] || zdCountry;\n}\n\nfunction splitZDLine1(line1) {\n  if (!line1) return { street: '', house_no: '' };\n  const streetMatch = line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || line1;\n  const houseNoMatch = line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || '';\n  return {\n    street: streetMatch,\n    house_no: houseNoMatch\n  };\n}\n\nfunction combineCStoLine1(street, houseNo) {\n  if (!street && !houseNo) return '';\n  return `${street} ${houseNo}`.trim();\n}\n\nfunction processItem(item) {\n  if (targetSystem === 'ZD') {\n    return {\n      id: item.zd_id || '',\n      first: item.cs_first || '',\n      last: item.cs_last || '',\n      line1: combineCStoLine1(item.cs_street, item.cs_house_no) || '',\n      city: item.cs_city || '',\n      country: convertCountryCStoZD(item.cs_country) || '',\n      zip: item.cs_zip || '',\n      type: item.cs_type || '',\n      company_name: item.cs_company_name || '',\n      mobile: item.cs_mobile || '',\n      phone: item.cs_phone || ''\n    };\n  } else {\n    const zdAddressParts = splitZDLine1(item.zd_line1);\n    return {\n      id: item.cs_id || '',\n      first: item.cs_first || '',\n      last: item.cs_last || '',\n      email: item.cs_email || '',\n      middle: item.cs_middle || '',\n      street: zdAddressParts.street || item.cs_street || '',\n      house_no: zdAddressParts.house_no || item.cs_house_no || '',\n      city: item.cs_city || '',\n      country: convertCountryZDtoCS(item.zd_country) || item.cs_country || '',\n      zip: item.cs_zip || '',\n      type: item.cs_type || '',\n      company_name: item.cs_company_name || '',\n      mobile: item.cs_mobile || '',\n      phone: item.cs_phone || ''\n    };\n  }\n}\n\n// Process the current item\nreturn processItem($input.item.json);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        3024
+      ],
+      "id": "ab19598e-cf54-4995-bad4-e0b602d853b4",
+      "name": "Convert CS to ZD"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d92c4a6c-e7ca-4208-a54c-710ce00bb67d",
+              "name": "street",
+              "value": "={{ $('Filter1').item.json.data.address.line1 ? \n   ($('Filter1').item.json.data.address.line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || $('Filter1').item.json.data.address.line1) \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "65488c62-f943-478b-9fdd-7adf0c50d342",
+              "name": "house_no",
+              "value": "={{ $('Filter1').item.json.data.address.line1 ? \n   ($('Filter1').item.json.data.address.line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || \"\") \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "3b72d5dc-1e5a-4d8d-bf25-3e3bdabf6db1",
+              "name": "country",
+              "value": "={{ ({\n'Albania': 'AL',\n'Andorra': 'AD',\n'Austria': 'AT',\n'Belarus': 'BY',\n'Belgium': 'BE',\n'Bosnia and Herzegovina': 'BA',\n'Bulgaria': 'BG',\n'Croatia': 'HR',\n'Cyprus': 'CY',\n'Czech Republic': 'CZ',\n'Denmark': 'DK',\n'Estonia': 'EE',\n'Finland': 'FI',\n'France': 'FR',\n'Deutschland': 'DE',\n'Greece': 'GR',\n'Hungary': 'HU',\n'Iceland': 'IS',\n'Ireland': 'IE',\n'Italy': 'IT',\n'Latvia': 'LV',\n'Liechtenstein': 'LI',\n'Lithuania': 'LT',\n'Luxembourg': 'LU',\n'Malta': 'MT',\n'Moldova': 'MD',\n'Monaco': 'MC',\n'Montenegro': 'ME',\n'Netherlands': 'NL',\n'North Macedonia': 'MK',\n'Norway': 'NO',\n'Poland': 'PL',\n'Portugal': 'PT',\n'Romania': 'RO',\n'Russia': 'RU',\n'San Marino': 'SM',\n'Serbia': 'RS',\n'Slovakia': 'SK',\n'Slovenia': 'SI',\n'Spain': 'ES',\n'Sweden': 'SE',\n'Switzerland': 'CH',\n'Ukraine': 'UA',\n'United Kingdom': 'GB',\n'Vatican City': 'VA',\n'United States': 'US'\n})[$('Filter1').item.json.data.address.country] || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c463ca87-2bd4-4544-b9c8-cdd9af2bf91e",
+              "name": "company_name",
+              "value": "={{ $json.company_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2528,
+        3712
+      ],
+      "id": "d35adffe-c4e9-45eb-908f-3f5e57d3aa0b",
+      "name": "Covert special fields1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/contacts/{{ $('Filter1').item.json.data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": \"{{ $json.customer_id }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3200,
+        3712
+      ],
+      "id": "ec4c5bcd-5316-4b6a-9c24-4184177b2dd5",
+      "name": "Zendesk: Update contact (Store CS ID)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "631c795e-db31-44fd-8e59-07f89164133f",
+              "leftValue": "={{ $json.data.custom_fields[\"Cyclesoftware ID\"] }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        3600
+      ],
+      "id": "63933bbe-ddd8-462c-87d3-989489a9389e",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        3600
+      ],
+      "id": "67932c66-6f17-476e-9bf8-ce08b2a99520",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3440,
+        3712
+      ],
+      "id": "8efe6402-6f9d-46e9-bfa2-7375ecbf2125",
+      "name": "Wait",
+      "webhookId": "172cca0d-fdec-4412-bae9-033af71f8aaf"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        768,
+        3024
+      ],
+      "id": "c54bc81c-075f-4c05-a328-435cac322b10",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "amount": 0.2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        3024
+      ],
+      "id": "c118d42c-058b-4656-8f36-b53b78eb75fa",
+      "name": "Wait1",
+      "webhookId": "172cca0d-fdec-4412-bae9-033af71f8aaf"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        2448
+      ],
+      "id": "d90c78f0-b827-4e7c-9fcc-0bb08a767d4a",
+      "name": "Loop Over Items5"
+    },
+    {
+      "parameters": {
+        "amount": 0.2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        2512
+      ],
+      "id": "f2951343-09df-4df4-bbeb-422cb4019ea8",
+      "name": "Wait7",
+      "webhookId": "172cca0d-fdec-4412-bae9-033af71f8aaf"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "pn2b9y1n4tsncfn",
+        "table": "mxduy4svevni6cp",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Get unmatched contacts1').item.json.Id }}"
+            },
+            {
+              "fieldName": "zd_import_completed",
+              "fieldValue": "1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        2288,
+        3024
+      ],
+      "id": "a75b72e9-be8f-4569-ac89-d9b441370cba",
+      "name": "Update a row2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "6i7oyNnDMJJSe8Vi",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk: Search by Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Search by Email": {
+      "main": [
+        [
+          {
+            "node": "If linked to company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep valid emails": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get all contacts": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store result in NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare fields": {
+      "main": [
+        [
+          {
+            "node": "Store result in NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get all contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Only keep valid emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get linked company": {
+      "main": [
+        [
+          {
+            "node": "Get company name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If linked to company": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get linked company",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company name": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Covert special fields": {
+      "main": [
+        [
+          {
+            "node": "Update a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Update contact": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get matched contacts1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get matched contacts": {
+      "main": [
+        [
+          {
+            "node": "Covert special fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update contact1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get matched contacts2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get matched contacts3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Create contact": {
+      "main": [
+        [
+          {
+            "node": "Update a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Create contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create company1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Skip empty last names",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If company1": {
+      "main": [
+        [
+          {
+            "node": "Skip empty company names",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get unmatched contacts1": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Create contact1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update contact (Store CS ID)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Create contact1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Search by company name": {
+      "main": [
+        [
+          {
+            "node": "If company not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If company not found": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Create company",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get company ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company ID": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert and apply suggestions": {
+      "main": [
+        [
+          {
+            "node": "Prepare Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Convert and apply suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Request": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Update contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert and apply suggestions1": {
+      "main": [
+        [
+          {
+            "node": "If company without a known ZD ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If company without a known ZD ID": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Search by company name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Only for known company IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only for known company IDs": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company ID1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Result1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip empty company names": {
+      "main": [
+        [
+          {
+            "node": "Create company1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip empty last names": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Create company": {
+      "main": [
+        [
+          {
+            "node": "Get company ID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get linked company1": {
+      "main": [
+        [
+          {
+            "node": "Get company name1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If linked to company1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get linked company1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Covert special fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company name1": {
+      "main": [
+        [
+          {
+            "node": "Covert special fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get contacts": {
+      "main": [
+        [
+          {
+            "node": "merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert CS to ZD": {
+      "main": [
+        [
+          {
+            "node": "If company1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Covert special fields1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Update contact (Store CS ID)": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If linked to company1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Convert CS to ZD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get unmatched contacts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Convert and apply suggestions1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Update contact1": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "30990b0b-de87-4a3e-ba43-dcbde438a91d",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-07-18T17:56:03.580Z",
+      "updatedAt": "2025-07-18T17:56:03.580Z",
+      "role": "workflow:owner",
+      "workflowId": "bqF1kdjtwuXcXYN4",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
