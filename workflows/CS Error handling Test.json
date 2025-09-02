@@ -1,0 +1,320 @@
+{
+  "createdAt": "2025-08-12T11:22:09.987Z",
+  "updatedAt": "2025-08-12T11:41:11.546Z",
+  "id": "S34EUwWyrmJesvZv",
+  "name": "CS Error handling Test",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.cyclesoftware.nl/api/v1/salesdata/orders.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "modified_startx",
+              "value": "={{ $now.minus(1, 'day').toISO() }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        -96
+      ],
+      "id": "f9ca4bae-231b-42ff-ada5-51691f1cc318",
+      "name": "Cyclesoftware: Get recently updated customers",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aedf76e2-7c9b-4689-8828-4d5d24972069",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        -96
+      ],
+      "id": "97181fc2-3d7e-4d3c-bdbf-4c854b229fc8",
+      "name": "Catch errors"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -96
+      ],
+      "id": "59295ace-3a3a-477b-8018-99bab8fc00c2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b486e4c-c409-4b77-8a5c-dcd6a624f260",
+              "name": "message",
+              "value": "={{ $json.error.message.split('- ')[1].parseJson() }}",
+              "type": "object"
+            },
+            {
+              "id": "64516930-a67f-4eac-a67c-a66516da7a04",
+              "name": "status",
+              "value": "={{ $json.error.status }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        0
+      ],
+      "id": "b6d7c03f-85b8-4374-a3dd-0d2e32789fa3",
+      "name": "Extract message"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Sync Error Reporter <system@qicq.nl>",
+        "toEmail": "info@octionic.com",
+        "subject": "Error during sync",
+        "emailFormat": "text",
+        "text": "=One entry could not be synced properly.\n\nError message: {{ $json.message.error_message }}\nZendesk ID: {{ 123456666}}\n\nPlease update the entry in Zendesk to fix the issue.\n\n[Execution: {{ $execution.id }}]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        -96
+      ],
+      "id": "b3700f31-144c-4a15-accc-9369f28217f8",
+      "name": "Send email",
+      "webhookId": "474e8f97-245f-46c3-a4f6-960d4f6bbe84",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $('Cyclesoftware: Get recently updated customers').item.json.error.message }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        576,
+        96
+      ],
+      "id": "91108897-46f1-405a-9bc4-5be7d7993288",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "25d68796-c837-402b-abca-1f7da7c34dec",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 400,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "90a66f3c-79c1-489a-9a3e-fce32a94d1af",
+      "name": "Catch known error"
+    }
+  ],
+  "connections": {
+    "Cyclesoftware: Get recently updated customers": {
+      "main": [
+        [
+          {
+            "node": "Catch errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get recently updated customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catch errors": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Extract message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract message": {
+      "main": [
+        [
+          {
+            "node": "Catch known error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        []
+      ]
+    },
+    "Catch known error": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Cyclesoftware: Get recently updated customers": [
+      {
+        "json": {
+          "error": {
+            "message": "400 - \"{\\\"error\\\":true,\\\"error_message\\\":\\\"modified_start not defined or invalid\\\"}\"",
+            "name": "AxiosError",
+            "stack": "AxiosError: Request failed with status code 400\n    at settle (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.8.3/node_modules/axios/lib/core/settle.js:19:12)\n    at RedirectableRequest.handleResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.8.3/node_modules/axios/lib/adapters/http.js:547:9)\n    at RedirectableRequest.emit (node:events:530:35)\n    at RedirectableRequest._processResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/follow-redirects@1.15.9/node_modules/follow-redirects/index.js:409:10)\n    at ClientRequest.RedirectableRequest._onNativeResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/follow-redirects@1.15.9/node_modules/follow-redirects/index.js:102:12)\n    at Object.onceWrapper (node:events:633:26)\n    at ClientRequest.emit (node:events:518:28)\n    at HTTPParser.parserOnIncomingClient (node:_http_client:716:27)\n    at HTTPParser.parserOnHeadersComplete (node:_http_common:117:17)\n    at TLSSocket.socketOnData (node:_http_client:558:22)\n    at Axios.request (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.8.3/node_modules/axios/lib/core/Axios.js:45:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at invokeAxios (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.29_46e522f8a77ed5eccc0991bfcca21502/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:313:10)\n    at proxyRequestToAxios (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.29_46e522f8a77ed5eccc0991bfcca21502/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:695:20)\n    at Object.request (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.29_46e522f8a77ed5eccc0991bfcca21502/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:1740:4)",
+            "code": "ERR_BAD_REQUEST",
+            "status": 400
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "7552cdc6-062a-4298-83f6-46dafab40202",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-12T11:22:09.987Z",
+      "updatedAt": "2025-08-12T11:22:09.987Z",
+      "role": "workflow:owner",
+      "workflowId": "S34EUwWyrmJesvZv",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
