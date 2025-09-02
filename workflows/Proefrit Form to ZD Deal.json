@@ -1,0 +1,55 @@
+{
+  "createdAt": "2025-08-26T15:27:25.956Z",
+  "updatedAt": "2025-08-26T22:00:57.226Z",
+  "id": "I5hGkhX3y3OB7obD",
+  "name": "Proefrit Form to ZD Deal",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a2e6b0bb-af6f-4232-9cc3-e98c9ff29ac3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2b0c7456-2178-4143-bda5-3d648d386c32",
+      "name": "Webhook",
+      "webhookId": "a2e6b0bb-af6f-4232-9cc3-e98c9ff29ac3"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c1c69c87-ded8-40bd-9561-1cb918233394",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-26T15:27:25.956Z",
+      "updatedAt": "2025-08-26T15:27:25.956Z",
+      "role": "workflow:owner",
+      "workflowId": "I5hGkhX3y3OB7obD",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
