@@ -1,0 +1,1418 @@
+{
+  "createdAt": "2025-07-18T18:01:46.588Z",
+  "updatedAt": "2025-08-12T11:47:15.313Z",
+  "id": "aQi8s6fYP7X0iwlf",
+  "name": "Sync contacts from ZD to CS",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "sort_by",
+              "value": "=updated_at:desc"
+            },
+            {
+              "name": "page",
+              "value": "={{ $json.page }}"
+            },
+            {
+              "name": "is_organization",
+              "value": "false"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        336
+      ],
+      "id": "10f89973-d74d-4035-9354-6e7af34433c6",
+      "name": "Zendesk: Get recently updated contacts",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Paginate until all timestamps found are older then previously stored one",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -800,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "1fda59ec-1f28-4e81-aff0-a7474b3a8960",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "last_update_zd",
+        "key": "last_update_zd",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        336
+      ],
+      "id": "5910a365-6c39-481f-ba1d-c6275b85b4e1",
+      "name": "Get last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a1c94ef-d080-4a20-bcb6-7ba12375a405",
+              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "26234167-6271-45eb-b676-d6704d65a209",
+              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items.last().data.updated_at.toDateTime() }}",
+              "rightValue": "={{ $('Get last updated timestamp').item.json.last_update_zd.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        336
+      ],
+      "id": "63305fc1-1ec1-4796-826f-d429c9ea4d38",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        240
+      ],
+      "id": "6172935e-0ea0-4c4b-a897-8f0f63057256",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "page",
+              "value": "={{ $('next').item.json.page + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $('next').item.json.data.concat($json.body.items) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        336
+      ],
+      "id": "7dc70d6a-3320-4d20-8720-4985e2e0f3b5",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "page",
+              "value": "={{ $json.page || 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -736,
+        336
+      ],
+      "id": "a747cfef-d3be-4c2f-af81-3994e8dd5e5d",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "last_update_zd",
+        "value": "={{ $('Globals').item.json.current_datetime }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        368,
+        128
+      ],
+      "id": "a0a2789a-a2b3-4ea3-81d2-e18f6787c18b",
+      "name": "Update last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "631c795e-db31-44fd-8e59-07f89164133f",
+              "leftValue": "={{ $json.data.updated_at.toDateTime() }}",
+              "rightValue": "={{ $('Get last updated timestamp').item.json.last_update_zd.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        336
+      ],
+      "id": "fa910a9e-d209-48e9-9d4a-ff0dd87e3ad5",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        368,
+        336
+      ],
+      "id": "bf5291e5-e6a7-41d5-b739-a80eb7a3a554",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4f00dc6-d659-42e2-82b1-b45e8b5fe1e4",
+              "name": "current_datetime",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1168,
+        336
+      ],
+      "id": "91cf84ac-3eb5-4e29-9853-4555d38c755e",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1392,
+        336
+      ],
+      "id": "aade1738-48ed-46eb-9cc1-7b0f70589049",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d92c4a6c-e7ca-4208-a54c-710ce00bb67d",
+              "name": "street",
+              "value": "={{ $('ZD Contact Ref').item.json.data.address.line1 ? \n   ($('ZD Contact Ref').item.json.data.address.line1.match(/^(.*?)\\s+\\d+[a-zA-Z0-9-]*\\s*$/)?.[1] || $('Skip previously updated items').item.json.data.address.line1) \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "65488c62-f943-478b-9fdd-7adf0c50d342",
+              "name": "house_no",
+              "value": "={{ $('ZD Contact Ref').item.json.data.address.line1 ? \n   ($('ZD Contact Ref').item.json.data.address.line1.match(/\\s(\\d+[a-zA-Z0-9-]*)\\s*$/)?.[1] || \"\") \n   : \"\" \n}}",
+              "type": "string"
+            },
+            {
+              "id": "3b72d5dc-1e5a-4d8d-bf25-3e3bdabf6db1",
+              "name": "country",
+              "value": "={{ ({\n'Albania': 'AL',\n'Andorra': 'AD',\n'Austria': 'AT',\n'Belarus': 'BY',\n'Belgium': 'BE',\n'Bosnia and Herzegovina': 'BA',\n'Bulgaria': 'BG',\n'Croatia': 'HR',\n'Cyprus': 'CY',\n'Czech Republic': 'CZ',\n'Denmark': 'DK',\n'Estonia': 'EE',\n'Finland': 'FI',\n'France': 'FR',\n'Deutschland': 'DE',\n'Greece': 'GR',\n'Hungary': 'HU',\n'Iceland': 'IS',\n'Ireland': 'IE',\n'Italy': 'IT',\n'Latvia': 'LV',\n'Liechtenstein': 'LI',\n'Lithuania': 'LT',\n'Luxembourg': 'LU',\n'Malta': 'MT',\n'Moldova': 'MD',\n'Monaco': 'MC',\n'Montenegro': 'ME',\n'Netherlands': 'NL',\n'North Macedonia': 'MK',\n'Norway': 'NO',\n'Poland': 'PL',\n'Portugal': 'PT',\n'Romania': 'RO',\n'Russia': 'RU',\n'San Marino': 'SM',\n'Serbia': 'RS',\n'Slovakia': 'SK',\n'Slovenia': 'SI',\n'Spain': 'ES',\n'Sweden': 'SE',\n'Switzerland': 'CH',\n'Ukraine': 'UA',\n'United Kingdom': 'GB',\n'Vatican City': 'VA',\n'United States': 'US'\n})[$('ZD Contact Ref').item.json.data.address.country] || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "c463ca87-2bd4-4544-b9c8-cdd9af2bf91e",
+              "name": "company_name",
+              "value": "={{ $json.company_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        432
+      ],
+      "id": "da845308-3670-4a63-9646-c1eda442e67b",
+      "name": "Covert special fields (ZD to CS)"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "items_to_skip_zd"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        240
+      ],
+      "id": "0e61dd62-3cff-46f7-8bc8-eaf19a2daf84",
+      "name": "Clear ZD items to skip",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        816,
+        336
+      ],
+      "id": "247636a6-8e2a-433a-812a-c3029defb093",
+      "name": "ZD Contact Ref"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff734e33-c687-464f-b447-c7fd7796d7f1",
+              "leftValue": "={{ $('Get ZD IDs to skip').first().json.items_to_skip_zd }}",
+              "rightValue": "={{ $('Filter').item.json.data.id.toString() }}",
+              "operator": {
+                "type": "array",
+                "operation": "notContains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        432
+      ],
+      "id": "97a0de87-167d-4bff-8502-d8a75b29f9a2",
+      "name": "Skip previously updated items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ecb766bf-427f-4f4a-a7b1-9160d79a9cc7",
+              "leftValue": "={{ $('ZD Contact Ref').item.json.data.contact_id !== null }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        432
+      ],
+      "id": "db854da6-6fd9-4e84-bdd0-79f77cea9607",
+      "name": "Is company in ZD?"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/contacts/{{ $('ZD Contact Ref').item.json.data.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 5,
+              "batchInterval": 2000
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1472,
+        336
+      ],
+      "id": "56f9c90a-71c9-4480-b8dc-ae12335057a7",
+      "name": "Zendesk: Get linked company1",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "184e4e3a-3e69-4060-89f3-7a57a08cee6e",
+              "name": "company_name",
+              "value": "={{ $json.body.data.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        336
+      ],
+      "id": "661f82f8-e27d-42f1-806d-6177a5f46be9",
+      "name": "Get company name"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "items_to_skip_cs",
+        "messageData": "={{ $('CS Contact Ref').item.json.customer_id.toString() }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3248,
+        432
+      ],
+      "id": "92967393-4ae9-4ff9-9d45-f9593004706b",
+      "name": "Store CS ID's to skip them during ZD update",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3024,
+        432
+      ],
+      "id": "31eec819-c168-4be3-9a3e-1680aa5c09b8",
+      "name": "CS Contact Ref"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $json.customer_id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2576,
+        320
+      ],
+      "id": "69f59f13-19fb-499b-a430-a4d108e63096",
+      "name": "Cyclesoftware: Update contact",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"customer_id\": {{ $('ZD Contact Ref').item.json.data.custom_fields['Cyclesoftware ID'] }},\n  \"customer_type_name\": \"{{ $('ZD Contact Ref').item.json.data.contact_id !== null ? \"Zakelijk\" : \"Klant\" }}\",\n  \"postcode\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.address.postal_code, \"\") }}\",\n  \"house_number\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.house_no, \"\") }}\",\n  \"company_name\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.company_name, \"\") }}\",\n  \"insertion\": \"\",\n  \"first_name\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.first_name, \"\") }}\",\n  \"name\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.last_name, \"\") }}\",\n  \"street\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.street, \"\") }}\",\n  \"city\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.address.city, \"\") }}\",\n  \"country_code_iso_3166\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.country, \"\") }}\",\n  \"email\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.email, \"\") }}\",\n  \"phone_numbers\": [\n    {\n      \"phone_number_id\": \"mob\",\n      \"phone_number\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.mobile, \"\") }}\"\n    },\n    {\n      \"phone_number_id\": \"tel\",\n      \"phone_number\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.phone, \"\") }}\"\n    }\n  ]\n  {{ $if($('ZD Contact Ref').item.json.data.contact_id !== null, ', \"attn\": \"' + $ifEmpty($('ZD Contact Ref').item.json.data.first_name, \"\") + ' ' + $ifEmpty($('ZD Contact Ref').item.json.data.last_name, \"\") + '\"', \"\") }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2352,
+        320
+      ],
+      "id": "04dd41f3-a92e-4e09-8540-4f2977c2c005",
+      "name": "Prepare Request"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"customer_type_name\": \"{{ $('ZD Contact Ref').item.json.data.contact_id !== null ? \"Zakelijk\" : \"Klant\" }}\",\n  \"postcode\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.address.postal_code, \"\") }}\",\n  \"house_number\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.house_no, \"\") }}\",\n  \"company_name\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.company_name, \"\") }}\",\n  \"insertion\": \"\",\n  \"first_name\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.first_name, \"\") }}\",\n  \"name\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.last_name, \"\") }}\",\n  \"street\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.street, \"\") }}\",\n  \"city\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.address.city, \"\") }}\",\n  \"country_code_iso_3166\": \"{{ $ifEmpty($('Covert special fields (ZD to CS)').item.json.country, \"\") }}\",\n  \"email\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.email, \"\") }}\",\n  \"phone_numbers\": [\n    {\n      \"phone_number_id\": \"mob\",\n      \"phone_number\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.mobile, \"\") }}\"\n    },\n    {\n      \"phone_number_id\": \"tel\",\n      \"phone_number\": \"{{ $ifEmpty($('ZD Contact Ref').item.json.data.phone, \"\") }}\"\n    }\n  ]\n  {{ $if($('ZD Contact Ref').item.json.data.contact_id !== null, ', \"attn\": \"' + $ifEmpty($('ZD Contact Ref').item.json.data.first_name, \"\") + ' ' + $ifEmpty($('ZD Contact Ref').item.json.data.last_name, \"\") + '\"', \"\") }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2352,
+        560
+      ],
+      "id": "20ff842a-413c-4cbc-8fc3-477387881bf6",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "254b26f6-8e86-464c-a522-2ac1c7d161ca",
+              "leftValue": "={{ $('ZD Contact Ref').item.json.data.custom_fields[\"Cyclesoftware ID\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2128,
+        432
+      ],
+      "id": "db2f3c6d-7681-443c-8a27-aa9394c5cc05",
+      "name": "If CS ID exists"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cfd91329-9e31-43b8-9d11-4476db8f8d4f",
+              "leftValue": "={{ $json.error.status }}",
+              "rightValue": 404,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2800,
+        320
+      ],
+      "id": "9726ab30-3c8f-4159-99a8-9e83568b10b6",
+      "name": "Contact was found - no 404"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cyclesoftware.nl/api/v1/customers.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2576,
+        560
+      ],
+      "id": "f62a7c66-7052-4ed1-8c03-c74b0fb5c686",
+      "name": "Cyclesoftware: Create contact",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/contacts/{{ $('ZD Contact Ref').item.json.data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": \"{{ $json.customer_id }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        800
+      ],
+      "id": "ebafa30c-fdc0-4636-8031-d7551676a8d6",
+      "name": "Zendesk: Update contact (Store CS ID)",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "items_to_skip_zd",
+        "key": "items_to_skip_zd",
+        "keyType": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        240
+      ],
+      "id": "d2b996a6-f4c4-4076-89d1-3fbb8a36fd5a",
+      "name": "Get ZD IDs to skip",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aedf76e2-7c9b-4689-8828-4d5d24972069",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2800,
+        560
+      ],
+      "id": "1174e7f4-e7ec-4612-b362-646787ee4e30",
+      "name": "Catch errors"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b486e4c-c409-4b77-8a5c-dcd6a624f260",
+              "name": "message",
+              "value": "={{ $json.error.message.split('- ')[1].parseJson() }}",
+              "type": "object"
+            },
+            {
+              "id": "64516930-a67f-4eac-a67c-a66516da7a04",
+              "name": "status",
+              "value": "={{ $json.error.status }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3024,
+        656
+      ],
+      "id": "18e01ac6-0954-47eb-bffc-5b505f79cac4",
+      "name": "Extract message"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Sync Error Reporter <system@qicq.nl>",
+        "toEmail": "system@qicq.nl",
+        "subject": "Error during sync",
+        "emailFormat": "text",
+        "text": "=One entry could not be synced properly.\n\nError message: {{ $json.message.error_message }}\nZendesk ID: {{ $('ZD Contact Ref').item.json.data.id }}\n\nPlease update the entry in Zendesk to fix the issue.\n\n[Execution: {{ $execution.id }}]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        3472,
+        560
+      ],
+      "id": "17b63077-7bd4-4583-b333-50f461f791ca",
+      "name": "Send email",
+      "webhookId": "474e8f97-245f-46c3-a4f6-960d4f6bbe84",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ $('Cyclesoftware: Get recently updated customers').item.json.error.message }}"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3472,
+        752
+      ],
+      "id": "1adb201a-83fc-4216-b120-d9fd88b15778",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "25d68796-c837-402b-abca-1f7da7c34dec",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 400,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3248,
+        656
+      ],
+      "id": "aac78786-5e68-4b32-988f-7f6263623f52",
+      "name": "Catch known error"
+    }
+  ],
+  "connections": {
+    "Zendesk: Get recently updated contacts": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last updated timestamp": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update last updated timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get recently updated contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "ZD Contact Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Get last updated timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Covert special fields (ZD to CS)": {
+      "main": [
+        [
+          {
+            "node": "If CS ID exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ZD Contact Ref": {
+      "main": [
+        [
+          {
+            "node": "Get ZD IDs to skip",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Skip previously updated items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip previously updated items": {
+      "main": [
+        [
+          {
+            "node": "Is company in ZD?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is company in ZD?": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get linked company1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Covert special fields (ZD to CS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get linked company1": {
+      "main": [
+        [
+          {
+            "node": "Get company name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company name": {
+      "main": [
+        [
+          {
+            "node": "Covert special fields (ZD to CS)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CS Contact Ref": {
+      "main": [
+        [
+          {
+            "node": "Store CS ID's to skip them during ZD update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Update contact": {
+      "main": [
+        [
+          {
+            "node": "Contact was found - no 404",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Request": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Update contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Create contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If CS ID exists": {
+      "main": [
+        [
+          {
+            "node": "Prepare Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact was found - no 404": {
+      "main": [
+        [
+          {
+            "node": "CS Contact Ref",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Create contact": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update contact (Store CS ID)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Catch errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ZD IDs to skip": {
+      "main": [
+        [
+          {
+            "node": "Clear ZD items to skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catch errors": {
+      "main": [
+        [
+          {
+            "node": "CS Contact Ref",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract message": {
+      "main": [
+        [
+          {
+            "node": "Catch known error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catch known error": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 1800,
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "data": {
+            "id": 552056501,
+            "creator_id": 2789884,
+            "contact_id": null,
+            "created_at": "2025-08-08T14:50:47Z",
+            "updated_at": "2025-08-08T14:50:47Z",
+            "title": null,
+            "name": "Robbert Quint",
+            "first_name": "Robbert",
+            "last_name": "Quint",
+            "description": null,
+            "website": null,
+            "email": "robbertquint@gmail.com",
+            "phone": null,
+            "mobile": "0639792792",
+            "fax": null,
+            "twitter": null,
+            "facebook": null,
+            "linkedin": null,
+            "skype": null,
+            "owner_id": 2789884,
+            "is_organization": false,
+            "address": {
+              "city": "Amsterdam",
+              "line1": "Johannes Frederik van Hengelstraat 56",
+              "postal_code": "1019 DC",
+              "state": null,
+              "country": "Netherlands"
+            },
+            "shipping_address": null,
+            "billing_address": null,
+            "industry": null,
+            "tags": [],
+            "custom_fields": {
+              "Cyclesoftware ID": "13608"
+            },
+            "customer_status": "none",
+            "prospect_status": "none",
+            "parent_organization_id": null
+          },
+          "meta": {
+            "version": 2,
+            "type": "contact"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "e4e6d101-cdde-4f4a-9faa-02141b9575d4",
+  "triggerCount": 0,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:06:55.321Z",
+      "updatedAt": "2025-07-18T18:06:55.321Z",
+      "id": "O8Gvscx6k1IxcC6a",
+      "name": "sub"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-07-18T18:01:46.588Z",
+      "updatedAt": "2025-07-18T18:01:46.588Z",
+      "role": "workflow:owner",
+      "workflowId": "aQi8s6fYP7X0iwlf",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
