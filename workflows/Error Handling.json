@@ -1,0 +1,308 @@
+{
+  "createdAt": "2025-07-18T12:53:37.826Z",
+  "updatedAt": "2025-07-18T13:19:45.894Z",
+  "id": "ucevxHAU6iRAZOr1",
+  "name": "Error Handling",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        720,
+        432
+      ],
+      "id": "02d17221-fccc-45b5-b9be-2c9c6ad93ed1"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "id": "116f8aa0-0e35-49d7-a1b0-e0e972177173",
+      "name": "n8n",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        1168,
+        240
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "IJh5NPVPvITJMgEQ",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $workflow.id }}"
+        },
+        "requestOptions": {}
+      },
+      "id": "a56b998a-a4af-4b5d-92c3-8dc6fa52b9fa",
+      "name": "get error handler",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        944,
+        240
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "IJh5NPVPvITJMgEQ",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "workflowObject": "={{ JSON.stringify($json) }}",
+        "requestOptions": {}
+      },
+      "id": "0e5f39fb-26c8-4e7d-b490-7ac726166e0d",
+      "name": "n8n | update",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        1824,
+        240
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "IJh5NPVPvITJMgEQ",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const data = $json\n\ndata.settings.errorWorkflow = $('get error handler').item.json.id ;\ndelete data.settings.callerPolicy;\n\nreturn {\n  id: data.id,\n  name: data.name,\n  nodes: data.nodes,\n  connections: data.connections,\n  settings: data.settings\n}"
+      },
+      "id": "22dda7e0-085c-46e5-a511-0a1953223eba",
+      "name": "set fields",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1600,
+        240
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "030c00a7-4398-4c5a-8b98-07ce7dfa0db4",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        720,
+        240
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "290fd302-4e2d-44d6-8a8a-14a0b8f2c360",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.settings.errorWorkflow }}",
+              "rightValue": "=Default Error Handler"
+            },
+            {
+              "id": "2a5799e9-2030-4281-bf11-e7f9777906c5",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "={{ $('get error handler').item.json.id }}"
+            },
+            {
+              "id": "8bc4c2a0-e094-4426-8ae6-71b6e4fa9842",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.active }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "938c0ad7-9963-4c08-baea-05f2fb277499",
+      "name": "Filter",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "n8n Error Reporter <system@qicq.nl>",
+        "toEmail": "system@qicq.nl",
+        "subject": "=Workflow failed on n8n (prod-01)",
+        "text": "=The workflow '{{$json[\"workflow\"][\"name\"]}}' (#{{$json[\"workflow\"][\"id\"]}}) has encountered an error at node '{{$json[\"execution\"][\"lastNodeExecuted\"]}}'.\n\nMessage: {{ $json.execution.error.message }}\n\nShow Execution: {{ $json.execution.url }}\n\nStack Trace:\n{{ $json.execution.error.stack }}",
+        "options": {}
+      },
+      "id": "baf4f94f-c89f-49cb-96d5-3c9e081da341",
+      "name": "Send email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        944,
+        432
+      ],
+      "webhookId": "e1f9d44e-121b-4df9-934e-77eb5a8dc9b9",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get error handler": {
+      "main": [
+        [
+          {
+            "node": "n8n",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set fields": {
+      "main": [
+        [
+          {
+            "node": "n8n | update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get error handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "set fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "74fb8f3c-6922-4a45-9416-e81210306334",
+  "triggerCount": 1,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T13:17:06.815Z",
+      "updatedAt": "2025-07-18T13:17:06.815Z",
+      "id": "AOwufbT2WG91mrLT",
+      "name": "system"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-07-18T12:53:37.826Z",
+      "updatedAt": "2025-07-18T12:53:37.826Z",
+      "role": "workflow:owner",
+      "workflowId": "ucevxHAU6iRAZOr1",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
