@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-02T18:31:28.310Z",
-  "updatedAt": "2025-09-02T18:36:13.891Z",
+  "updatedAt": "2025-09-02T19:49:06.160Z",
   "id": "UgSvPTJUacQRtrA4",
   "name": "n8n Backup",
   "active": true,
@@ -108,7 +108,7 @@
         "triggerTimes": {
           "item": [
             {
-              "mode": "everyX"
+              "minute": 3
             }
           ]
         }
@@ -671,7 +671,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "11e884f8-5a1c-4010-95df-9a61ef7ccf67",
+  "versionId": "ce3b6b21-78fb-461a-b5bf-56123af3492d",
   "triggerCount": 1,
   "tags": [],
   "shared": [
