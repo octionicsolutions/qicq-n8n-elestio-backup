@@ -1,28 +1,11 @@
 {
   "createdAt": "2025-08-26T15:26:40.372Z",
-  "updatedAt": "2025-09-02T18:17:35.386Z",
+  "updatedAt": "2025-09-03T21:21:00.490Z",
   "id": "Pjx74ZM8nOyYSu7G",
   "name": "Keuzehulp Form to ZD Deal",
-  "active": true,
+  "active": false,
   "isArchived": false,
-  "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        0,
-        0
-      ],
-      "id": "835063ec-87c3-45ae-b0ab-1a7cbba74f7a",
-      "name": "Webhook",
-      "webhookId": "30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5"
-    }
-  ],
+  "nodes": [],
   "connections": {},
   "settings": {
     "executionOrder": "v1",
@@ -30,41 +13,8 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n-u47189.vm.elestio.app",
-            "x-real-ip": "45.152.249.3",
-            "x-forwarded-for": "45.152.249.3",
-            "x-forwarded-proto": "https",
-            "x-forwarded-port": "443",
-            "connection": "close",
-            "content-length": "242",
-            "accept": "*/*",
-            "content-type": "application/json"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "voornaam": "Hans",
-            "achternaam": "Eijgenram",
-            "email": "hans_eijgenraam@planet.nl",
-            "telefoon": "",
-            "typefiets": "elektrische-fiets",
-            "typemotor": "middenmotor",
-            "typeaccu": "500-wh-2",
-            "typeaandrijving": "riem",
-            "typezithouding": "comfortabele-zithouding"
-          },
-          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5",
-          "executionMode": "production"
-        }
-      }
-    ]
-  },
-  "versionId": "9f85977e-16a9-46f1-a3c7-57b1b3c89480",
+  "pinData": {},
+  "versionId": "34344e33-195a-4d7a-8eca-2422e33b55b7",
   "triggerCount": 1,
   "tags": [],
   "shared": [
