@@ -1,0 +1,38 @@
+{
+  "createdAt": "2025-08-25T17:39:24.493Z",
+  "updatedAt": "2025-09-03T21:19:58.647Z",
+  "id": "BeZGCw97SgMjmeQq",
+  "name": "Form to ZD Deal",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f255a894-fdf9-4b65-a07e-b53fe1266c63",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-25T17:39:24.493Z",
+      "updatedAt": "2025-08-25T17:39:24.493Z",
+      "role": "workflow:owner",
+      "workflowId": "BeZGCw97SgMjmeQq",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
