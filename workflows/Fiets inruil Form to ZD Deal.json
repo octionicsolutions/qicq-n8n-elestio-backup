@@ -1,28 +1,11 @@
 {
   "createdAt": "2025-08-25T17:55:09.253Z",
-  "updatedAt": "2025-08-25T22:00:57.234Z",
+  "updatedAt": "2025-09-03T21:18:44.979Z",
   "id": "nkrcSDvRWfbYqBFq",
   "name": "Fiets inruil Form to ZD Deal",
-  "active": true,
+  "active": false,
   "isArchived": false,
-  "nodes": [
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "c5104dfa-45df-4f15-baf1-0d49d1c7e48d",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2,
-      "position": [
-        0,
-        0
-      ],
-      "id": "abc1ceca-5f4e-4ff2-a2d2-c0cc619ac7f2",
-      "name": "Webhook",
-      "webhookId": "c5104dfa-45df-4f15-baf1-0d49d1c7e48d"
-    }
-  ],
+  "nodes": [],
   "connections": {},
   "settings": {
     "executionOrder": "v1",
@@ -30,71 +13,8 @@
   },
   "staticData": null,
   "meta": null,
-  "pinData": {
-    "Webhook": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n-u47189.vm.elestio.app",
-            "x-real-ip": "45.152.249.3",
-            "x-forwarded-for": "45.152.249.3",
-            "x-forwarded-proto": "https",
-            "x-forwarded-port": "443",
-            "connection": "close",
-            "content-length": "813",
-            "user-agent": "WordPress/6.8.2; https://www.qicq.nl",
-            "accept": "*/*",
-            "accept-encoding": "deflate, gzip",
-            "content-type": "application/json"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "1": "Test",
-            "3": "info@octionic.com",
-            "4": "+491234567890",
-            "5": "pedelec",
-            "7": "gekocht",
-            "8": "fiets",
-            "9": "display",
-            "14": "kapot",
-            "16": "",
-            "17": "octionic",
-            "id": "1876",
-            "form_id": "11",
-            "post_id": null,
-            "date_created": "2025-08-25 17:57:57",
-            "date_updated": "2025-08-25 17:57:57",
-            "is_starred": "0",
-            "is_read": "0",
-            "ip": "87.122.121.207",
-            "source_url": "https://www.qicq.nl/elektrische-fiets-inruilen/",
-            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-            "currency": "EUR",
-            "payment_status": null,
-            "payment_date": null,
-            "payment_amount": null,
-            "payment_method": null,
-            "transaction_id": null,
-            "is_fulfilled": null,
-            "created_by": "30",
-            "transaction_type": null,
-            "status": "active",
-            "source_id": "4915",
-            "6.1": "E-bike",
-            "12.2": "Nee",
-            "11.1": "Ja",
-            "6.2": "",
-            "12.1": "",
-            "11.2": ""
-          },
-          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/c5104dfa-45df-4f15-baf1-0d49d1c7e48d",
-          "executionMode": "production"
-        }
-      }
-    ]
-  },
-  "versionId": "3ff74e68-dd00-4cf5-b1d7-e46b7fda0eae",
+  "pinData": {},
+  "versionId": "592c48d4-937a-41dc-9c53-74575b55c450",
   "triggerCount": 1,
   "tags": [],
   "shared": [
