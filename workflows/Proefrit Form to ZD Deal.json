@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-26T15:27:25.956Z",
-  "updatedAt": "2025-09-03T21:19:30.981Z",
+  "updatedAt": "2025-09-11T13:28:06.096Z",
   "id": "I5hGkhX3y3OB7obD",
   "name": "Proefrit Form to ZD Deal",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [],
   "connections": {},
   "settings": {
@@ -14,7 +14,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "e59e139d-6406-40c4-9668-40ddff702504",
+  "versionId": "f18ab057-df2c-4aee-8088-4dba8aeacba2",
   "triggerCount": 1,
   "tags": [],
   "shared": [
