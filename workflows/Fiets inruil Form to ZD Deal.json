@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-25T17:55:09.253Z",
-  "updatedAt": "2025-09-03T21:18:44.979Z",
+  "updatedAt": "2025-09-11T13:28:04.311Z",
   "id": "nkrcSDvRWfbYqBFq",
   "name": "Fiets inruil Form to ZD Deal",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [],
   "connections": {},
   "settings": {
@@ -14,7 +14,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "592c48d4-937a-41dc-9c53-74575b55c450",
+  "versionId": "fcbb239e-86ec-4489-a3fe-ace71a814808",
   "triggerCount": 1,
   "tags": [],
   "shared": [
