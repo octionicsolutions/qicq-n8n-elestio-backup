@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-03T21:18:16.417Z",
-  "updatedAt": "2025-09-03T22:00:04.214Z",
+  "updatedAt": "2025-09-11T16:11:46.869Z",
   "id": "J8UbSOdoRSgc0fyE",
   "name": "Create Deal in ZD by submitted form and map contact",
   "active": true,
@@ -72,57 +72,560 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://n8n-01.dev.octionic.com/webhook/c5104dfa-45df-4f15-baf1-0d49d1c7e48d",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ $json.body.toJsonString() }}",
-        "options": {}
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.data.email }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        48,
-        -80
-      ],
-      "id": "4fa36c9b-1f5c-47eb-8b80-0dc157aa349f",
-      "name": "HTTP Request"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://n8n-01.dev.octionic.com/webhook/30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ $json.body.toJsonString() }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        48,
+        1184,
         144
       ],
-      "id": "abc6e9bd-3861-4dd7-a67e-7a8bf2a383e4",
-      "name": "HTTP Request1"
+      "id": "f26aacd7-1892-4bf9-8d55-cab1b651f6f0",
+      "name": "Zendesk: Get contacts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ffad9e85-2c09-4c23-977c-3c17e772dd54",
+              "leftValue": "={{ $json.body.items[0].data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1408,
+        144
+      ],
+      "id": "8f223669-c55a-4566-9cb2-3be21b8051d6",
+      "name": "If contact does not exist"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        144
+      ],
+      "id": "d4154ee8-df33-4c37-972f-62ff11260a09",
+      "name": "ZD Contact Ref"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"name\": \"{{ $('Start').item.json.form }} - {{ $ifEmpty($('Start').item.json.first_name, \"[UNKNOWN]\") }} {{ $ifEmpty($('Start').item.json.last_name, \"[UNKNOWN]\") }}\",\n    \"contact_id\": {{ $json.data ? $json.data.id : $json.body.items[0].data.id }},\n    \"currency\": \"EUR\",\n    \"stage_id\": {{ $('Globals').item.json.stage_id }},\n    \"source_id\": {{ $('Start').item.json.source_id }},\n    \"tags\": [\"Inruil\"],\n    \"custom_fields\": {\n      \"Details\": {{ $('Start').item.json.Details.toJsonString() }}\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2080,
+        144
+      ],
+      "id": "7f832b1e-60be-4b95-8b12-b6da6c54d781",
+      "name": "Prepare fields1"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://n8n-01.dev.octionic.com/webhook/54869734-c9f4-4ba8-a617-d41c79cd550b",
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ $json.body.toJsonString() }}",
+        "jsonBody": "={{ $json.toJsonString() }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        48,
+        2304,
+        144
+      ],
+      "id": "91ca17aa-be3a-4de6-a2a9-448f1890c523",
+      "name": "Zendesk: Create deal",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Wrap in object').item.json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1632,
+        64
+      ],
+      "id": "6838c4b4-73e5-48a9-be38-85603e4b310e",
+      "name": "Zendesk: Create contact",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "742e70f9-a0c0-4a73-a018-a5ddb6dc7abf",
+              "name": "data",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        144
+      ],
+      "id": "8662a1d0-bab2-449c-b612-e78e9583abda",
+      "name": "Wrap in object"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1625fcb-74dc-435d-8c5a-076df133ef8a",
+              "name": "first_name",
+              "value": "={{ $ifEmpty($('Start').item.json.first_name, \"[UNKNOWN]\") }}",
+              "type": "string"
+            },
+            {
+              "id": "c42d7ad0-b972-4732-b483-14371b832457",
+              "name": "last_name",
+              "value": "={{ $ifEmpty($('Start').item.json.last_name, \"[UNKNOWN]\") }}",
+              "type": "string"
+            },
+            {
+              "id": "5698bd88-2650-4d4a-b6ea-cd07ed51c5b9",
+              "name": "email",
+              "value": "={{ $('Start').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "61388219-6407-4905-80d1-1db6099edb78",
+              "name": "mobile",
+              "value": "={{ $('Start').item.json.mobile }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        736,
+        144
+      ],
+      "id": "aaf79900-d437-4e16-bb1c-68fac88b2bb4",
+      "name": "Prepare contact"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        288,
+        144
+      ],
+      "id": "81ed5eee-16ec-4165-9df6-0c3bb9b746ba",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deal_sources",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        512,
+        592
+      ],
+      "id": "30926852-9c28-4bdd-905c-ee581c5de41c",
+      "name": "Zendesk: Get deal_sources",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "221086d1-99d6-4fb6-86f9-b93c193fd3ba",
+              "name": "stage_id",
+              "value": "119627",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        144
+      ],
+      "id": "90746c16-e5f3-4865-8f1a-1b1babc0c110",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3352f940-0bf5-4a73-8d8a-fd85bcb64b04",
+              "name": "form",
+              "value": "Fiets inruil",
+              "type": "string"
+            },
+            {
+              "id": "33512a92-0ac7-459a-a73e-ebfd3441671e",
+              "name": "first_name",
+              "value": "={{ $json.body['1'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5b140476-d99d-45ef-a581-0f42837e10b6",
+              "name": "last_name",
+              "value": "={{ $json.body['17'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f6cbc5-4a78-41e1-9d78-708f046cfad1",
+              "name": "email",
+              "value": "={{ $json.body['3'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bddad807-cce1-4b55-9259-7530e0cc8a26",
+              "name": "mobile",
+              "value": "={{ $json.body['4'] }}",
+              "type": "string"
+            },
+            {
+              "id": "50fd5c94-3fe3-452c-a591-661fb6f77358",
+              "name": "Details",
+              "value": "=Merk & model: {{ $json.body['5'] }}\\nType: {{ $json.body['6.1'] }}\\nBouwjaar: {{ $json.body['7'] }}\\nPrijs: {{ $json.body['8'] }}\\nKm-stand: {{ $json.body['9'] }}\\nIn orde?: {{ $json.body['12.2'] }}\\nDefect: {{ $json.body['14'] }}\\nFactuur?: {{ $json.body['11.1'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e03778e4-84fa-4e07-aa65-28882a258dbe",
+              "name": "source_id",
+              "value": 13096459,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        -80
+      ],
+      "id": "b18e31c7-f848-4d9d-8e8a-eb11f0f6365b",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/stages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        512,
         368
       ],
-      "id": "4990118a-91b5-4ab4-9d32-6256ee441925",
-      "name": "HTTP Request2"
+      "id": "9a01e448-e666-44d2-a3c9-9ee57debd6f5",
+      "name": "Zendesk: Get stages",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3352f940-0bf5-4a73-8d8a-fd85bcb64b04",
+              "name": "form",
+              "value": "Keuzehulp",
+              "type": "string"
+            },
+            {
+              "id": "33512a92-0ac7-459a-a73e-ebfd3441671e",
+              "name": "first_name",
+              "value": "={{ $json.body['voornaam'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5b140476-d99d-45ef-a581-0f42837e10b6",
+              "name": "last_name",
+              "value": "={{ $json.body['achternaam'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f6cbc5-4a78-41e1-9d78-708f046cfad1",
+              "name": "email",
+              "value": "={{ $json.body['email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bddad807-cce1-4b55-9259-7530e0cc8a26",
+              "name": "mobile",
+              "value": "={{ $json.body['telefoon'] }}",
+              "type": "string"
+            },
+            {
+              "id": "50fd5c94-3fe3-452c-a591-661fb6f77358",
+              "name": "Details",
+              "value": "=Type Fiets: {{ $json.body['typefiets'] }}\\nType Motor: {{ $json.body['typemotor'] }}\\nType Accu: {{ $json.body['typeaccu'] }}\\nAandrijving: {{ $json.body['typeaandrijving'] }}\\nZithouding: {{ $json.body['typezithouding'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e03778e4-84fa-4e07-aa65-28882a258dbe",
+              "name": "source_id",
+              "value": 11691077,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        144
+      ],
+      "id": "4ab7b004-4a7a-4e19-b36d-8ab0ce53cb3e",
+      "name": "Map fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3352f940-0bf5-4a73-8d8a-fd85bcb64b04",
+              "name": "form",
+              "value": "Lease Calculator",
+              "type": "string"
+            },
+            {
+              "id": "33512a92-0ac7-459a-a73e-ebfd3441671e",
+              "name": "first_name",
+              "value": "={{ $json.body['voornaam'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5b140476-d99d-45ef-a581-0f42837e10b6",
+              "name": "last_name",
+              "value": "={{ $json.body['achternaam'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f6cbc5-4a78-41e1-9d78-708f046cfad1",
+              "name": "email",
+              "value": "={{ $json.body['email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bddad807-cce1-4b55-9259-7530e0cc8a26",
+              "name": "mobile",
+              "value": "={{ $json.body['telefoon'] }}",
+              "type": "string"
+            },
+            {
+              "id": "50fd5c94-3fe3-452c-a591-661fb6f77358",
+              "name": "Details",
+              "value": "=Merk: {{ $json.body['keuze_merk'] }}\\nModel: {{ $json.body['keuze_model'] }}\\nTermijn: {{ $json.body['keuze_termijn_nice'] }}\\nAard: {{ $json.body['keuze_aard'] }}\\nUitvoering: {{ $json.body['keuze_uitvoering_nice'] }}\\nAanbetaling: {{ $json.body['keuze_aanbetaling'] }}\\nMaandbedrag: €{{ $json.body['maandbedrag'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e03778e4-84fa-4e07-aa65-28882a258dbe",
+              "name": "source_id",
+              "value": 11691078,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        368
+      ],
+      "id": "d0ae92c7-547d-41b9-85a3-8f550f133e8f",
+      "name": "Map fields3"
+    },
+    {
+      "parameters": {
+        "content": "## Set mapping\nUse nodes below to retrieve the correct IDs.\n\nStage: \"Informatie\"\n\nSources:\n- Fiets inruil = \"Upway aanvraag\"\n- Keuzehulp = \"Keuzehulp\"\n- Lease calculator = \"Lease calculator\"\n",
+        "height": 912,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        -144
+      ],
+      "typeVersion": 1,
+      "id": "7282deef-9a7a-4de6-9ef7-246739fbba01",
+      "name": "Sticky Note1"
     }
   ],
   "connections": {
@@ -130,7 +633,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Map fields",
             "type": "main",
             "index": 0
           }
@@ -141,7 +644,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request1",
+            "node": "Map fields1",
             "type": "main",
             "index": 0
           }
@@ -152,7 +655,146 @@
       "main": [
         [
           {
-            "node": "HTTP Request2",
+            "node": "Map fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get contacts": {
+      "main": [
+        [
+          {
+            "node": "If contact does not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If contact does not exist": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Create contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ZD Contact Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ZD Contact Ref": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare fields1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Create deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Create contact": {
+      "main": [
+        [
+          {
+            "node": "ZD Contact Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wrap in object": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare contact": {
+      "main": [
+        [
+          {
+            "node": "Wrap in object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Prepare contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields1": {
+      "main": [
+        [
+          {
+            "node": "Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields3": {
+      "main": [
+        [
+          {
+            "node": "Start",
             "type": "main",
             "index": 0
           }
@@ -162,7 +804,9 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 2
   },
   "staticData": null,
   "meta": null,
@@ -294,11 +938,57 @@
           "executionMode": "production"
         }
       }
+    ],
+    "Map fields1": [
+      {
+        "json": {
+          "form": "Keuzehulp",
+          "first_name": "Hans",
+          "last_name": "Eijgenram",
+          "email": "hans_eijgenraam@planet.nl",
+          "mobile": "",
+          "Details": "Type Fiets: elektrische-fiets\\nType Motor: middenmotor\\nType Accu: 500-wh-2\\nAandrijving: riem\\nZithouding: comfortabele-zithouding",
+          "source_id": 14495000
+        }
+      }
+    ],
+    "Map fields3": [
+      {
+        "json": {
+          "form": "Lease Calculator",
+          "first_name": "",
+          "last_name": "",
+          "email": "sandyjsmit@hotmail.com",
+          "mobile": "",
+          "Details": "Merk: Lovens\\nModel: 5451\\nTermijn: 36 maanden\\nAard: Zakelijk\\nUitvoering: Lovens Explorer S75\\nAanbetaling: plus_250\\nMaandbedrag: €131.40495867769",
+          "source_id": 14494999
+        }
+      }
+    ],
+    "Map fields": [
+      {
+        "json": {
+          "form": "Fiets inruil",
+          "first_name": "Test",
+          "last_name": "octionic",
+          "email": "info@octionic.com",
+          "mobile": "+491234567890",
+          "Details": "Merk & model: pedelec\\nType: E-bike\\nBouwjaar: gekocht\\nPrijs: fiets\\nKm-stand: display\\nIn orde?: Nee\\nDefect: kapot\\nFactuur?: Ja",
+          "source_id": 13096459
+        }
+      }
     ]
   },
-  "versionId": "63527e81-5134-4661-80a7-c155e6db2665",
+  "versionId": "ac8d2e5c-5c94-4653-82b2-f99f3560719f",
   "triggerCount": 4,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:13:03.391Z",
+      "updatedAt": "2025-07-18T18:13:03.391Z",
+      "id": "9Unu8zOsMe5ug14X",
+      "name": "main"
+    }
+  ],
   "shared": [
     {
       "createdAt": "2025-09-03T21:18:16.417Z",
