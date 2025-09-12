@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-25T17:39:24.493Z",
-  "updatedAt": "2025-09-03T21:19:58.647Z",
+  "updatedAt": "2025-09-11T13:28:07.990Z",
   "id": "BeZGCw97SgMjmeQq",
   "name": "Form to ZD Deal",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [],
   "connections": {},
   "settings": {
@@ -14,7 +14,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "f255a894-fdf9-4b65-a07e-b53fe1266c63",
+  "versionId": "21fc157f-a238-407a-96ac-529680a780a8",
   "triggerCount": 1,
   "tags": [],
   "shared": [
