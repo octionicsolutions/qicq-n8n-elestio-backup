@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:10:24.221Z",
-  "updatedAt": "2025-07-20T22:00:24.949Z",
+  "updatedAt": "2025-09-11T15:06:32.301Z",
   "id": "uzwe6p9dFQOF1IFN",
   "name": "Run 2-way Sync between CS and ZD",
   "active": true,
@@ -269,7 +269,9 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 2
   },
   "staticData": {
     "node:Schedule Trigger1": {
@@ -280,7 +282,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3efa94c4-7f88-48a3-8477-bcdaea2ce334",
+  "versionId": "6b972576-1f86-4780-8989-60103ef41cb1",
   "triggerCount": 1,
   "tags": [
     {
