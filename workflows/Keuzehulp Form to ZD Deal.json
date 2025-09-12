@@ -1,10 +1,10 @@
 {
   "createdAt": "2025-08-26T15:26:40.372Z",
-  "updatedAt": "2025-09-03T21:21:00.490Z",
+  "updatedAt": "2025-09-11T13:28:09.889Z",
   "id": "Pjx74ZM8nOyYSu7G",
   "name": "Keuzehulp Form to ZD Deal",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [],
   "connections": {},
   "settings": {
@@ -14,7 +14,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "34344e33-195a-4d7a-8eca-2422e33b55b7",
+  "versionId": "ad83cd5b-da1a-4f6f-8f61-60463f96efde",
   "triggerCount": 1,
   "tags": [],
   "shared": [
