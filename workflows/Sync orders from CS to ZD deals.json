@@ -1,0 +1,1865 @@
+{
+  "createdAt": "2025-09-17T11:48:38.596Z",
+  "updatedAt": "2025-09-17T11:55:17.609Z",
+  "id": "MOCbD1Vyim0GGKgU",
+  "name": "Sync orders from CS to ZD deals",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "sales_order_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        416
+      ],
+      "id": "7aab9b81-6225-431a-99cd-a927bf31304a",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "content": "In case an order contains multiple bikes",
+        "height": 208,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2832,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "16f2ed37-f522-4062-92f1-61fdb2c92aac",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://api.cyclesoftware.nl/api/v1/salesdata/orders.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "offset",
+              "value": "={{ $json.offset }}"
+            },
+            {
+              "name": "modified_start",
+              "value": "={{ $('Get last updated timestamp').item.json.cs_orders_last_update.toDateTime().format('yyyy-MM-dd') || $now.minus(30, 'days').format('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "modified_end",
+              "value": "={{ $now.minus(30, 'days').format('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        416
+      ],
+      "id": "835fd38b-fd79-48a9-80c6-8f52e6dee6ae",
+      "name": "Cyclesoftware: Get recently updated orders",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "custom_fields[Cyclesoftware ID]",
+              "value": "={{ $('CS Order Ref').item.json.customer_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3968,
+        512
+      ],
+      "id": "8ec1617a-77d0-4e50-ba7c-ddf62e286429",
+      "name": "Zendesk: Get contacts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ffad9e85-2c09-4c23-977c-3c17e772dd54",
+              "leftValue": "={{ $json.body.items[0].data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4192,
+        512
+      ],
+      "id": "01eb3c8d-f9cf-49aa-8f5e-a6903e5e3fd4",
+      "name": "If contact does not exist"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Contact coulnd not be found in ZD"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        4416,
+        416
+      ],
+      "id": "7195f188-e7db-4aa6-92fc-18203a3201da",
+      "name": "Contact not found in ZD"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"name\": \"{{ $('CS Order Ref').item.json.description }}\",\n    \"contact_id\": {{ $('Zendesk: Get contacts').item.json.body.items[0].data.id }},\n    \"currency\": \"EUR\",\n    \"value\": \"{{ ($('CS Order Ref').item.json.gross_unit_price_in_vat_in_cents / 100).toFixed(2) }}\",\n    \"stage_id\": {{ $('Set Stage ID').item.json.stage_id }},\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": {{ $('CS Order Ref').item.json.sales_order_id }}\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5680,
+        608
+      ],
+      "id": "c7565f63-b16a-4493-89c2-132631f6f326",
+      "name": "Prepare fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Prepare fields').item.json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5888,
+        608
+      ],
+      "id": "8b540545-5c19-4cbe-b0d6-2d0a4f49b052",
+      "name": "Zendesk: Create deal",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/stages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        656
+      ],
+      "id": "d232f06b-de97-4f7f-bf04-92c9329df208",
+      "name": "Zendesk: Get stages",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "contact_id",
+              "value": "={{ $json.body.items[0].data.id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4416,
+        608
+      ],
+      "id": "a1a77051-abc9-4282-b63e-0d2597b8c723",
+      "name": "Zendesk: Get deals",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Question\nAlways search deal by contact and deal with multiple orders OR store CS order ID in ZD and risk duplicates due to already existing deals? Since that otherwise would require an initial matching.\n## Suggestion\nAlways search for deal, HITL if decision unclear. Store CS ID as final mapping",
+        "height": 304,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4064,
+        864
+      ],
+      "typeVersion": 1,
+      "id": "0d209076-029a-4c37-a505-48bec6c81eae",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1fb6f508-4edd-4748-b24e-2775b301c907",
+                    "leftValue": "={{ $json.items }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "array",
+                      "operation": "lengthEquals",
+                      "rightType": "number"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "one"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e33199c1-cde7-4e37-b0a4-fe56c455a778",
+                    "leftValue": "={{ $json.items }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "array",
+                      "operation": "lengthGt",
+                      "rightType": "number"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "multiple"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        5888,
+        800
+      ],
+      "id": "855a9bbf-9a71-447a-b77f-48b0d4e1eea9",
+      "name": "Check how many orders were found"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        5056,
+        896
+      ],
+      "id": "6104612c-9e42-4a4d-8384-f2201bc04798",
+      "name": "Do nothing"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "custom_fields[Cyclesoftware ID]",
+              "value": "={{ $('Remove Duplicates').item.json.sales_order_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 5,
+              "batchInterval": 2000
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3504,
+        416
+      ],
+      "id": "98c43929-4675-4306-83ce-ce012d281117",
+      "name": "Zendesk: Get deal by CS ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "58b22a5b-e124-49c9-b00e-3b0b1fbe4501",
+              "leftValue": "={{ $json.body.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3712,
+        416
+      ],
+      "id": "fc8f13fd-ae08-4219-8a9a-742b195d8a09",
+      "name": "Deal found?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3968,
+        208
+      ],
+      "id": "1ad0dc76-beaa-4028-ad5c-2c5e613725f4",
+      "name": "Update deal1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        5056,
+        704
+      ],
+      "id": "acb23335-2628-4b21-b101-732ea1badfeb",
+      "name": "Split Out",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "02add3d8-a204-49f2-8de8-7d730bde17a3",
+              "leftValue": "={{ $json.data.custom_fields[\"Cyclesoftware ID\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        5264,
+        704
+      ],
+      "id": "6954ea15-45da-4c52-8ad4-71327969e890",
+      "name": "Skip items where a CS ID is set",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        5680,
+        800
+      ],
+      "id": "0f96c543-defb-4f95-8335-7c868780835c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4864,
+        608
+      ],
+      "id": "e418ced5-c7b1-4052-9956-3feb60335322",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5264,
+        896
+      ],
+      "id": "e1b3b23b-bf2e-4bb5-bed9-de66737cf983",
+      "name": "Wait",
+      "webhookId": "782fa07b-163d-407e-b66a-1c5e9ff78dea"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"contact_id\": {{ $('Zendesk: Get contacts').item.json.body.items[0].data.id }},\n    \"currency\": \"EUR\",\n    \"value\": {{ $if($('CS Order Ref').item.json.gross_unit_price_in_vat_in_cents > 0, ($('CS Order Ref').item.json.gross_unit_price_in_vat_in_cents / 100).toFixed(2), 0) }},\n    \"stage_id\": {{ $('Set Stage ID').item.json.stage_id }},\n    \"custom_fields\": {\n      \"Cyclesoftware ID\": {{ $('CS Order Ref').item.json.sales_order_id }}\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6384,
+        800
+      ],
+      "id": "6d79db9b-bb18-4d01-8942-0db81761f4d7",
+      "name": "Prepare fields1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/deals/{{ $('ZD Deal Ref').item.json.body.items[0].data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Prepare fields1').item.json.toJsonString() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6608,
+        800
+      ],
+      "id": "3ca40db2-498d-42db-b759-d95b9f4edbf8",
+      "name": "Zendesk: Update deal",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6128,
+        960
+      ],
+      "id": "15bfe6d4-aaa5-452f-99d0-025f172dddcb",
+      "name": "Async HITL to choose deal or create new"
+    },
+    {
+      "parameters": {
+        "content": "For now just pick the first one (without a CS ID)",
+        "height": 224,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        6064,
+        896
+      ],
+      "typeVersion": 1,
+      "id": "4caeca0a-eb25-4982-934d-256e2720eff4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40b475ce-acf3-40c0-a019-23b313d221f5",
+              "name": "current_datetime",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "62297b65-4a62-4040-867c-3679e18e67b9",
+              "name": "stage_id_information",
+              "value": 119627,
+              "type": "number"
+            },
+            {
+              "id": "92094e3b-ef60-435b-ac68-15f74dc3bc66",
+              "name": "stage_id_offer",
+              "value": 119634,
+              "type": "number"
+            },
+            {
+              "id": "b5de3488-ee5d-4fa1-ae3a-f1bce8d1fb03",
+              "name": "stage_id_won",
+              "value": 119628,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        416
+      ],
+      "id": "10f154e2-93d9-45a3-8919-b5615cbaa2c4",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        416
+      ],
+      "id": "5a8db430-49e4-45dc-82c5-10810e713266",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "95295a79-b3ec-4de9-a4e3-672337c7954b",
+              "name": "stage_id",
+              "value": "={{ $('CS Order Ref').item.json.order_type_id == 5 ? $('Globals').item.json.stage_id_offer : $('Globals').item.json.stage_id_won }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3296,
+        416
+      ],
+      "id": "9bbbcb28-c076-4ee8-af85-9a4a8bbfb6fb",
+      "name": "Set Stage ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e70c47e6-488c-42df-b0b5-2f7e67cfe527",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5472,
+        704
+      ],
+      "id": "073d163c-9e04-4213-b4ba-44cdf2e285bc",
+      "name": "No deal found"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"data\": {\n    \"value\": {{ $if($('Calc total value').item.json.total_value > 0, ($('Calc total value').item.json.total_value / 100).toFixed(2), 0) }},\n    \"stage_id\": {{ $('Set Stage ID').item.json.stage_id }}\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4192,
+        208
+      ],
+      "id": "a434787f-f519-4865-b6fb-e647de94d4b8",
+      "name": "Prepare fields2"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.getbase.com/v2/deals/{{ $('Zendesk: Get deal by CS ID').item.json.body.items[0].data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Prepare fields2').item.json.toJsonString() }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4416,
+        208
+      ],
+      "id": "192ca46f-3e95-446d-9146-ae6564045449",
+      "name": "Zendesk: Update deal1",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "cs_orders_last_update",
+        "key": "cs_orders_last_update",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        224,
+        416
+      ],
+      "id": "064b6c1f-f435-46f1-ab3b-7d88626c2738",
+      "name": "Get last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "cs_orders_last_update",
+        "value": "={{ $('Globals').item.json.current_datetime }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        224
+      ],
+      "id": "6e1b67a7-1fd4-4bbc-b2e3-44c5c78ecd6c",
+      "name": "Update last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "offset",
+              "value": "={{ $json.offset || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        416
+      ],
+      "id": "23feacf7-29f6-4956-99f6-e4f349a3cb93",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "offset",
+              "value": "={{ $('next').first().json.offset + 500 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $if(!$json.isEmpty(), $('next').first().json.data.concat($input.all().map(i => i.json)), $('next').first().json.data) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        416
+      ],
+      "id": "23adcbe6-0a40-40d8-85f5-e815d36f809e",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "26234167-6271-45eb-b676-d6704d65a209",
+              "leftValue": "={{ $('Cyclesoftware: Get recently updated orders').item.json }}",
+              "rightValue": 404,
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        416
+      ],
+      "id": "299f85f3-abf2-4d5b-a3be-ed738c4274d1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        320
+      ],
+      "id": "c0593de3-57d8-47c8-a175-c70824ce0025",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "content": "Paginate until all items were retrieved which have been modified before the last stored timestamp",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        384,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "71eb4301-734c-407f-8ffd-fbe612a0f2da",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        416
+      ],
+      "id": "faf33949-4ec9-4262-9dcf-82ba4c289e3f",
+      "name": "CS Order Ref"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4640,
+        608
+      ],
+      "id": "fb622052-fff4-4a69-a3e4-41d187853e71",
+      "name": "ZD Deal Ref"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "zd_deals_items_to_skip",
+        "messageData": "={{ $json.data.id.toString() }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        6864,
+        608
+      ],
+      "id": "4b0be08a-b68c-4922-8517-825e04a2649e",
+      "name": "Store ZD ID's to skip them during CS update",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6608,
+        608
+      ],
+      "id": "c858e7e7-6903-4826-b09a-b24d1cc14b90",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6608,
+        416
+      ],
+      "id": "fe014767-c86b-4d79-a313-e57227f81e89",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cb1a2dc4-cd94-45a8-9f09-f1000bbb8d7c",
+              "leftValue": "={{ $json.datetime_modified }}",
+              "rightValue": "={{ $('Get last updated timestamp').item.json.cs_orders_last_update }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        416
+      ],
+      "id": "375680de-eb42-42f7-ac23-fe91c1859330",
+      "name": "Keep only new entries"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "284f7548-7c3d-443c-b301-70330cd288e9",
+              "leftValue": "={{ $json.data[0] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1552,
+        416
+      ],
+      "id": "72c98bd4-ef7b-4877-b55c-129c8c5c041b",
+      "name": "Only continue if data returned"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        416
+      ],
+      "id": "09492077-edaa-4875-9422-b894322b52bd",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb50306e-33d4-44da-9cee-fbfe2468e9c7",
+              "leftValue": "={{ $json.pos_group_id }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2448,
+        416
+      ],
+      "id": "e637ce1c-58cf-44a6-8b91-bf5fb032289c",
+      "name": "Only keep orders with a bike"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "48152aed-c8c3-4a44-be0e-9b40e8e43979",
+              "name": "total_value",
+              "value": "={{ \n  $('CS Order Ref')\n    .all()\n    .filter(i => i.json.sales_order_id === $json.sales_order_id)\n    .reduce((sum, i) => sum + i.json.gross_unit_price_in_vat_in_cents, 0) \n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3088,
+        416
+      ],
+      "id": "16d44ae0-064a-49ae-ae04-771801e5c5e3",
+      "name": "Calc total value"
+    },
+    {
+      "parameters": {
+        "content": "## ToDo\nSer error handling workflow",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "5a62d232-47ad-49d3-be90-836bb3db7b6c",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb50306e-33d4-44da-9cee-fbfe2468e9c7",
+              "leftValue": "={{ $json.status_id }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2672,
+        416
+      ],
+      "id": "4991a37d-bc22-4eaa-baa5-aac18c6d0583",
+      "name": "Only keep orders with a bike1"
+    },
+    {
+      "parameters": {
+        "content": "## Set stage ID's\n\nExecute the node below and search within the result for the ID's of the stages listed in the set node",
+        "height": 592,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "d47acf59-45e3-45a9-883a-5e2312d0c8b7",
+      "name": "Sticky Note6"
+    }
+  ],
+  "connections": {
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Calc total value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get recently updated orders": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get contacts": {
+      "main": [
+        [
+          {
+            "node": "If contact does not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If contact does not exist": {
+      "main": [
+        [
+          {
+            "node": "Contact not found in ZD",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk: Get deals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare fields": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Create deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Create deal": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get deals": {
+      "main": [
+        [
+          {
+            "node": "ZD Deal Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check how many orders were found": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Async HITL to choose deal or create new",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Do nothing": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get deal by CS ID": {
+      "main": [
+        [
+          {
+            "node": "Deal found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deal found?": {
+      "main": [
+        [
+          {
+            "node": "Update deal1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk: Get contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update deal1": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Skip items where a CS ID is set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip items where a CS ID is set": {
+      "main": [
+        [
+          {
+            "node": "No deal found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Check how many orders were found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare fields1": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update deal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Update deal": {
+      "main": [
+        [
+          {
+            "node": "Store ZD ID's to skip them during CS update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Async HITL to choose deal or create new": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Get last updated timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Stage ID": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get deal by CS ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No deal found": {
+      "main": [
+        [
+          {
+            "node": "Prepare fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare fields2": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Update deal1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Update deal1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last updated timestamp": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get recently updated orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Update last updated timestamp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Only continue if data returned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CS Order Ref": {
+      "main": [
+        [
+          {
+            "node": "Only keep orders with a bike",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ZD Deal Ref": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Store ZD ID's to skip them during CS update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Store ZD ID's to skip them during CS update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep only new entries": {
+      "main": [
+        [
+          {
+            "node": "CS Order Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only continue if data returned": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Keep only new entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep orders with a bike": {
+      "main": [
+        [
+          {
+            "node": "Only keep orders with a bike1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calc total value": {
+      "main": [
+        [
+          {
+            "node": "Set Stage ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep orders with a bike1": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "424f75a6-f3af-42a9-ac71-c17060acf69e",
+  "triggerCount": 0,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:06:55.321Z",
+      "updatedAt": "2025-07-18T18:06:55.321Z",
+      "id": "O8Gvscx6k1IxcC6a",
+      "name": "sub"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-09-17T11:48:38.596Z",
+      "updatedAt": "2025-09-17T11:48:38.596Z",
+      "role": "workflow:owner",
+      "workflowId": "MOCbD1Vyim0GGKgU",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
