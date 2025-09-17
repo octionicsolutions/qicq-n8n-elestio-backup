@@ -1,0 +1,870 @@
+{
+  "createdAt": "2025-09-17T11:46:23.102Z",
+  "updatedAt": "2025-09-17T11:55:05.695Z",
+  "id": "J5w7xv52mTvHunct",
+  "name": "Sync deals from ZD to CS orders",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "sort_by",
+              "value": "=last_stage_change_at:desc"
+            },
+            {
+              "name": "page",
+              "value": "={{ $json.page }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        160
+      ],
+      "id": "94086fb1-d7af-4640-b972-b52019e301eb",
+      "name": "Zendesk: Get recently updated contacts",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Paginate until all timestamps found are older then previously stored one",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        624,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "c9dc9e9b-f237-4893-94d0-1c3c950136fe",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "zd_deals_last_update",
+        "key": "zd_deals_last_update",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        448,
+        160
+      ],
+      "id": "57350e28-a93f-44e8-bf03-4f56e0d79939",
+      "name": "Get last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a1c94ef-d080-4a20-bcb6-7ba12375a405",
+              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "26234167-6271-45eb-b676-d6704d65a209",
+              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items.last().data.last_stage_change_at.toDateTime() }}",
+              "rightValue": "={{ $('Get last updated timestamp').item.json.zd_deals_last_update?.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        160
+      ],
+      "id": "81eb6a6f-3135-4199-8e2b-1700633f265f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        64
+      ],
+      "id": "66833e7a-b395-4fb6-8346-22dc77b3d3b2",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "page",
+              "value": "={{ $('next').item.json.page + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $('next').item.json.data.concat($json.body.items) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        160
+      ],
+      "id": "550758e2-81c6-451b-8333-55f967b49af4",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "page",
+              "value": "={{ $json.page || 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        160
+      ],
+      "id": "6e61d669-5ecc-4360-b627-a62c3f49c0a0",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "zd_deals_last_update",
+        "value": "={{ $('Globals').item.json.current_datetime }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        -32
+      ],
+      "id": "6d75608e-5582-45ac-8360-003610945504",
+      "name": "Update last updated timestamp",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        160
+      ],
+      "id": "4ec427a1-c860-4284-a74d-69cfc567c07a",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4f00dc6-d659-42e2-82b1-b45e8b5fe1e4",
+              "name": "current_datetime",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "bb73e633-b7fb-495e-b6a9-3a7f1df5f22b",
+              "name": "stage_id_lost",
+              "value": 37480415,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        160
+      ],
+      "id": "930f5bef-0d6f-4d65-a4b1-ff5b531e01d7",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        160
+      ],
+      "id": "11baaa61-a64a-49ad-b469-362f6c8ba73c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aadb55be-c2ed-4b5b-a3cd-91ad20ecf484",
+              "leftValue": "={{ $json.data.stage_id }}",
+              "rightValue": "={{ $('Globals').item.json.stage_id_lost }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2656,
+        256
+      ],
+      "id": "45d863fb-3c09-4c78-a829-731e222694cb",
+      "name": "Only keep lost deals"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "zd_deals_items_to_skip",
+        "key": "zd_deals_items_to_skip",
+        "keyType": "list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        64
+      ],
+      "id": "0475d541-3ed6-4c7b-a630-aa1d42e085de",
+      "name": "Get ZD ID's to skip",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "zd_deals_items_to_skip"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2656,
+        64
+      ],
+      "id": "bb976721-c5cd-4522-a4e8-addcf9513de4",
+      "name": "Clear ZD items to skip",
+      "executeOnce": true,
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff734e33-c687-464f-b447-c7fd7796d7f1",
+              "leftValue": "={{ $('Get ZD ID\\'s to skip').first().json.zd_deals_items_to_skip }}",
+              "rightValue": "={{ $('Keep only new entries').item.json.data.id.toString() }}",
+              "operator": {
+                "type": "array",
+                "operation": "notContains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2432,
+        256
+      ],
+      "id": "930ac402-a44a-45e6-9b46-7244fc189636",
+      "name": "Skip previously updated items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        160
+      ],
+      "id": "751994d2-52ba-4c63-ad3c-06065de684f3",
+      "name": "ZD Deal Ref"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "cs_orders_items_to_skip",
+        "messageData": "={{ $('ZD Deal Ref').item.json.data.custom_fields[\"Cyclesoftware ID\"].toString() }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        256
+      ],
+      "id": "888e2d21-473d-454f-9ab9-fd25592f1a42",
+      "name": "Store CS ID's to skip them during ZD update",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.cyclesoftware.nl/api/v1/common/enum.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3104,
+        496
+      ],
+      "id": "cdb409c9-615c-4eea-9c05-e252ff0885d3",
+      "name": "Cyclesoftware: Get common values",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cyclesoftware.nl/api/v1/sales/orders/{{ $json.data.custom_fields[\"Cyclesoftware ID\"] }}/cancel.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "cancellation_type_id",
+              "value": "8"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3104,
+        256
+      ],
+      "id": "7c540b5f-48bc-42f1-9379-97b49c8cc78e",
+      "name": "Cyclesoftware: Cancel order (\"unknown\")",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "631c795e-db31-44fd-8e59-07f89164133f",
+              "leftValue": "={{ $json.data.updated_at.toDateTime().toLocal() }}",
+              "rightValue": "={{ $('Get last updated timestamp').item.json.zd_deals_last_update.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        160
+      ],
+      "id": "ec2e2df9-7fae-494a-9b4d-e02adee1dfbf",
+      "name": "Keep only new entries"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "041e789e-2422-4cae-8c3e-b7833573eef7",
+              "leftValue": "={{ $json.data.custom_fields[\"Cyclesoftware ID\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        256
+      ],
+      "id": "c1cc7df9-2d97-4dd4-af16-4e04f05187ef",
+      "name": "Only continue if CS ID is set in ZD already"
+    },
+    {
+      "parameters": {
+        "content": "## Set cancellation reason ID\n\nExecute the node below and search within the result for the ID of the reason named \"unknown\"",
+        "height": 624,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3040,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "fa6844b1-1220-4945-8745-05618cd8e4cc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## ToDo\nSer error handling workflow",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "1f69633a-5f9f-4cb3-9065-5420e82ddeb7",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Zendesk: Get recently updated contacts": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get last updated timestamp": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Update last updated timestamp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get recently updated contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Keep only new entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Get last updated timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep lost deals": {
+      "main": [
+        [
+          {
+            "node": "Only continue if CS ID is set in ZD already",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ZD ID's to skip": {
+      "main": [
+        [
+          {
+            "node": "Clear ZD items to skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip previously updated items": {
+      "main": [
+        [
+          {
+            "node": "Only keep lost deals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ZD Deal Ref": {
+      "main": [
+        [
+          {
+            "node": "Get ZD ID's to skip",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Skip previously updated items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Cancel order (\"unknown\")": {
+      "main": [
+        [
+          {
+            "node": "Store CS ID's to skip them during ZD update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep only new entries": {
+      "main": [
+        [
+          {
+            "node": "ZD Deal Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only continue if CS ID is set in ZD already": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Cancel order (\"unknown\")",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ucevxHAU6iRAZOr1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "6401820d-209b-4210-8f32-e807e75e19e4",
+  "triggerCount": 0,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:06:55.321Z",
+      "updatedAt": "2025-07-18T18:06:55.321Z",
+      "id": "O8Gvscx6k1IxcC6a",
+      "name": "sub"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-09-17T11:46:23.102Z",
+      "updatedAt": "2025-09-17T11:46:23.102Z",
+      "role": "workflow:owner",
+      "workflowId": "J5w7xv52mTvHunct",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
