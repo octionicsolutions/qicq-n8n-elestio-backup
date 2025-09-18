@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:46:23.102Z",
-  "updatedAt": "2025-09-17T11:55:05.695Z",
+  "updatedAt": "2025-09-17T16:14:52.693Z",
   "id": "J5w7xv52mTvHunct",
   "name": "Sync deals from ZD to CS orders",
   "active": false,
@@ -832,14 +832,15 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "executionTimeout": 300
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6401820d-209b-4210-8f32-e807e75e19e4",
+  "versionId": "4731c340-a98f-44c1-93c2-2852e09a920e",
   "triggerCount": 0,
   "tags": [
     {
