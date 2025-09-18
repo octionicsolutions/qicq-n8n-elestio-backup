@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-17T11:55:17.609Z",
+  "updatedAt": "2025-09-17T16:14:57.562Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -55,7 +55,7 @@
             },
             {
               "name": "modified_end",
-              "value": "={{ $now.minus(30, 'days').format('yyyy-MM-dd') }}"
+              "value": "={{ $now.format('yyyy-MM-dd') }}"
             }
           ]
         },
@@ -1821,7 +1821,8 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "executionTimeout": 900
   },
   "staticData": null,
   "meta": {
@@ -1834,7 +1835,7 @@
       }
     ]
   },
-  "versionId": "424f75a6-f3af-42a9-ac71-c17060acf69e",
+  "versionId": "a58d0eec-9dbf-41e7-9dc6-bc033e134a82",
   "triggerCount": 0,
   "tags": [
     {
