@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:10:24.221Z",
-  "updatedAt": "2025-09-12T17:35:54.664Z",
+  "updatedAt": "2025-09-17T16:13:58.093Z",
   "id": "uzwe6p9dFQOF1IFN",
   "name": "Run 2-way Sync between CS and ZD",
   "active": true,
@@ -41,7 +41,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        -656,
+        -640,
         32
       ],
       "credentials": {
@@ -61,7 +61,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        16,
+        480,
         32
       ],
       "credentials": {
@@ -126,14 +126,14 @@
     },
     {
       "parameters": {
-        "content": "Make sure Timeout is set to 30 minutes within both workflows",
+        "content": "Make sure Timeout is set in total to 60 minutes across all workflows",
         "height": 256,
-        "width": 456,
+        "width": 888,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -496,
+        -480,
         -32
       ],
       "typeVersion": 1,
@@ -161,7 +161,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -208,
+        -192,
         32
       ],
       "id": "9e1120dd-1231-4ea2-b34e-446bdebc9e19",
@@ -190,11 +190,69 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [
-        -432,
+        -416,
         32
       ],
       "id": "ba3d2bd5-37c2-410f-8928-fd2d9ed9c2f3",
       "name": "Sync contacts from CS to ZD",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MOCbD1Vyim0GGKgU",
+          "mode": "list",
+          "cachedResultName": "Sync orders from CS to ZD deals"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        32
+      ],
+      "id": "e168fbde-ff55-4164-95dd-dcb84c860852",
+      "name": "Sync orders from CS to ZD deals",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "J5w7xv52mTvHunct",
+          "mode": "list",
+          "cachedResultName": "Sync deals from ZD to CS orders"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        32
+      ],
+      "id": "8b631b8b-520a-4f23-9fc3-fb8b56e276f4",
+      "name": "Sync deals from ZD to CS orders",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput"
     }
@@ -248,7 +306,7 @@
       "main": [
         [
           {
-            "node": "Remove Flag",
+            "node": "Sync orders from CS to ZD deals",
             "type": "main",
             "index": 0
           }
@@ -260,6 +318,28 @@
         [
           {
             "node": "Sync contacts from ZD to CS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync orders from CS to ZD deals": {
+      "main": [
+        [
+          {
+            "node": "Sync deals from ZD to CS orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync deals from ZD to CS orders": {
+      "main": [
+        [
+          {
+            "node": "Remove Flag",
             "type": "main",
             "index": 0
           }
@@ -282,7 +362,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "3882f6f3-62c7-4a5f-b237-4218bde51910",
+  "versionId": "b019f11e-9f35-42a2-bb07-788ce08b2149",
   "triggerCount": 1,
   "tags": [
     {
