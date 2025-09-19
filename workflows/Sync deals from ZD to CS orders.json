@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:46:23.102Z",
-  "updatedAt": "2025-09-17T16:14:52.693Z",
+  "updatedAt": "2025-09-18T15:56:00.704Z",
   "id": "J5w7xv52mTvHunct",
   "name": "Sync deals from ZD to CS orders",
   "active": false,
@@ -294,7 +294,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        16,
+        -208,
         160
       ],
       "id": "11baaa61-a64a-49ad-b469-362f6c8ba73c",
@@ -632,6 +632,17 @@
       "typeVersion": 1,
       "id": "1f69633a-5f9f-4cb3-9065-5420e82ddeb7",
       "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        16,
+        160
+      ],
+      "id": "573b4de6-0cce-4793-8d99-18275c72eeb5",
+      "name": "Limit"
     }
   ],
   "connections": {
@@ -739,7 +750,7 @@
       "main": [
         [
           {
-            "node": "Globals",
+            "node": "Limit",
             "type": "main",
             "index": 0
           }
@@ -827,6 +838,17 @@
           }
         ]
       ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -840,7 +862,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "4731c340-a98f-44c1-93c2-2852e09a920e",
+  "versionId": "aa561a5f-e50a-46de-8e4b-f59883189933",
   "triggerCount": 0,
   "tags": [
     {
