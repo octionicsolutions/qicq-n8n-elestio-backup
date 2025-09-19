@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-17T16:14:57.562Z",
+  "updatedAt": "2025-09-18T15:55:13.313Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -86,8 +86,9 @@
       ],
       "id": "835fd38b-fd79-48a9-80c6-8f52e6dee6ae",
       "name": "Cyclesoftware: Get recently updated orders",
-      "retryOnFail": false,
+      "retryOnFail": true,
       "alwaysOutputData": true,
+      "waitBetweenTries": 5000,
       "credentials": {
         "httpBasicAuth": {
           "id": "q6AhamIl37oB4xIX",
@@ -754,7 +755,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -224,
+        -464,
         416
       ],
       "id": "5a8db430-49e4-45dc-82c5-10810e713266",
@@ -905,7 +906,7 @@
       "parameters": {
         "operation": "set",
         "key": "cs_orders_last_update",
-        "value": "={{ $('Globals').item.json.current_datetime }}"
+        "value": "={{ $('Globals').first().json.current_datetime }}"
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
@@ -1132,7 +1133,7 @@
             {
               "id": "cb1a2dc4-cd94-45a8-9f09-f1000bbb8d7c",
               "leftValue": "={{ $json.datetime_modified }}",
-              "rightValue": "={{ $('Get last updated timestamp').item.json.cs_orders_last_update }}",
+              "rightValue": "={{ $('Get last updated timestamp').first().json.cs_orders_last_update }}",
               "operator": {
                 "type": "dateTime",
                 "operation": "after"
@@ -1317,6 +1318,17 @@
       "typeVersion": 1,
       "id": "d47acf59-45e3-45a9-883a-5e2312d0c8b7",
       "name": "Sticky Note6"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        416
+      ],
+      "id": "77216ec3-a630-4a20-bacc-fbdf3746476e",
+      "name": "Limit"
     }
   ],
   "connections": {
@@ -1582,7 +1594,7 @@
       "main": [
         [
           {
-            "node": "Globals",
+            "node": "Limit",
             "type": "main",
             "index": 0
           }
@@ -1816,6 +1828,17 @@
           }
         ]
       ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1828,14 +1851,8 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "When Executed by Another Workflow": [
-      {
-        "json": {}
-      }
-    ]
-  },
-  "versionId": "a58d0eec-9dbf-41e7-9dc6-bc033e134a82",
+  "pinData": {},
+  "versionId": "fa3c4cdb-f680-4fa5-bfe0-a49b1dd94bae",
   "triggerCount": 0,
   "tags": [
     {
