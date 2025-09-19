@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:01:46.588Z",
-  "updatedAt": "2025-09-17T14:55:07.110Z",
+  "updatedAt": "2025-09-18T15:57:02.332Z",
   "id": "aQi8s6fYP7X0iwlf",
   "name": "Sync contacts from ZD to CS",
   "active": false,
@@ -327,7 +327,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -1392,
+        -1616,
         336
       ],
       "id": "aade1738-48ed-46eb-9cc1-7b0f70589049",
@@ -967,6 +967,17 @@
       ],
       "id": "aac78786-5e68-4b32-988f-7f6263623f52",
       "name": "Catch known error"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1392,
+        336
+      ],
+      "id": "df46852a-6fe2-4aa4-8c7e-f03f9a1fdae8",
+      "name": "Limit"
     }
   ],
   "connections": {
@@ -1085,7 +1096,7 @@
       "main": [
         [
           {
-            "node": "Globals",
+            "node": "Limit",
             "type": "main",
             "index": 0
           }
@@ -1323,6 +1334,17 @@
           }
         ]
       ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1335,59 +1357,8 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "When Executed by Another Workflow": [
-      {
-        "json": {
-          "data": {
-            "id": 552056501,
-            "creator_id": 2789884,
-            "contact_id": null,
-            "created_at": "2025-08-08T14:50:47Z",
-            "updated_at": "2025-08-08T14:50:47Z",
-            "title": null,
-            "name": "Robbert Quint",
-            "first_name": "Robbert",
-            "last_name": "Quint",
-            "description": null,
-            "website": null,
-            "email": "robbertquint@gmail.com",
-            "phone": null,
-            "mobile": "0639792792",
-            "fax": null,
-            "twitter": null,
-            "facebook": null,
-            "linkedin": null,
-            "skype": null,
-            "owner_id": 2789884,
-            "is_organization": false,
-            "address": {
-              "city": "Amsterdam",
-              "line1": "Johannes Frederik van Hengelstraat 56",
-              "postal_code": "1019 DC",
-              "state": null,
-              "country": "Netherlands"
-            },
-            "shipping_address": null,
-            "billing_address": null,
-            "industry": null,
-            "tags": [],
-            "custom_fields": {
-              "Cyclesoftware ID": "13608"
-            },
-            "customer_status": "none",
-            "prospect_status": "none",
-            "parent_organization_id": null
-          },
-          "meta": {
-            "version": 2,
-            "type": "contact"
-          }
-        }
-      }
-    ]
-  },
-  "versionId": "e4e6d101-cdde-4f4a-9faa-02141b9575d4",
+  "pinData": {},
+  "versionId": "af359658-7ac8-466b-b74a-ad917e574844",
   "triggerCount": 0,
   "tags": [
     {
