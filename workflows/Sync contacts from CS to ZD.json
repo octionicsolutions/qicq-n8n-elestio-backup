@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:07:26.170Z",
-  "updatedAt": "2025-09-17T14:55:08.995Z",
+  "updatedAt": "2025-09-18T15:57:33.640Z",
   "id": "XijVrxbRFoQP3UEm",
   "name": "Sync contacts from CS to ZD",
   "active": false,
@@ -926,7 +926,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -1760,
+        -1984,
         208
       ],
       "id": "9cab45e3-1672-4e8e-8c03-227751e372f3",
@@ -942,6 +942,17 @@
       ],
       "id": "42e9b1f4-7a45-4545-a29a-925add20b2b8",
       "name": "CS Contact Ref"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        208
+      ],
+      "id": "b9640936-e175-4ba8-8a77-1d4ecd06d014",
+      "name": "Limit"
     }
   ],
   "connections": {
@@ -1286,7 +1297,7 @@
       "main": [
         [
           {
-            "node": "Globals",
+            "node": "Limit",
             "type": "main",
             "index": 0
           }
@@ -1308,6 +1319,17 @@
           }
         ]
       ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1321,7 +1343,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "7d9241ae-4a3e-48a3-aa91-a602faa0bb4d",
+  "versionId": "6095ecc7-a8c1-47e7-9d21-84531d8d9bd8",
   "triggerCount": 0,
   "tags": [
     {
