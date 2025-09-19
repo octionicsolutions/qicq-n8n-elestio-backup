@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:10:24.221Z",
-  "updatedAt": "2025-09-17T16:13:58.093Z",
+  "updatedAt": "2025-09-18T15:54:59.631Z",
   "id": "uzwe6p9dFQOF1IFN",
   "name": "Run 2-way Sync between CS and ZD",
   "active": true,
@@ -362,7 +362,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "b019f11e-9f35-42a2-bb07-788ce08b2149",
+  "versionId": "30966f53-6afc-426b-9626-9295f3f37a81",
   "triggerCount": 1,
   "tags": [
     {
