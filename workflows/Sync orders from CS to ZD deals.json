@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-18T15:55:13.313Z",
+  "updatedAt": "2025-09-21T19:06:40.682Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -81,7 +81,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        672,
+        432,
         416
       ],
       "id": "835fd38b-fd79-48a9-80c6-8f52e6dee6ae",
@@ -273,7 +273,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        0,
+        -240,
         656
       ],
       "id": "d232f06b-de97-4f7f-bf04-92c9329df208",
@@ -742,7 +742,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        0,
+        -240,
         416
       ],
       "id": "10f154e2-93d9-45a3-8919-b5615cbaa2c4",
@@ -755,7 +755,7 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
       "position": [
-        -464,
+        -704,
         416
       ],
       "id": "5a8db430-49e4-45dc-82c5-10810e713266",
@@ -890,7 +890,7 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        224,
+        -16,
         416
       ],
       "id": "064b6c1f-f435-46f1-ab3b-7d88626c2738",
@@ -946,7 +946,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        448,
+        208,
         416
       ],
       "id": "23feacf7-29f6-4956-99f6-e4f349a3cb93",
@@ -965,7 +965,7 @@
             {
               "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
               "name": "data",
-              "value": "={{ $if(!$json.isEmpty(), $('next').first().json.data.concat($input.all().map(i => i.json)), $('next').first().json.data) }}",
+              "value": "={{ \n  $if(\n    $('next').item.json.data?.length,\n    $('next').item.json.data.append(...$json.data),\n    $json.data\n  ) \n}}",
               "type": "array"
             }
           ]
@@ -993,7 +993,7 @@
           "conditions": [
             {
               "id": "26234167-6271-45eb-b676-d6704d65a209",
-              "leftValue": "={{ $('Cyclesoftware: Get recently updated orders').item.json }}",
+              "leftValue": "={{ $('Cyclesoftware: Get recently updated orders').first().json }}",
               "rightValue": 404,
               "operator": {
                 "type": "object",
@@ -1042,13 +1042,13 @@
       "parameters": {
         "content": "Paginate until all items were retrieved which have been modified before the last stored timestamp",
         "height": 280,
-        "width": 880,
+        "width": 896,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        384,
-        368
+        368,
+        352
       ],
       "typeVersion": 1,
       "id": "71eb4301-734c-407f-8ffd-fbe612a0f2da",
@@ -1259,20 +1259,6 @@
     },
     {
       "parameters": {
-        "content": "## ToDo\nSer error handling workflow",
-        "color": 3
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -144,
-        -48
-      ],
-      "typeVersion": 1,
-      "id": "5a62d232-47ad-49d3-be90-836bb3db7b6c",
-      "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -1312,7 +1298,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -64,
+        -304,
         240
       ],
       "typeVersion": 1,
@@ -1324,11 +1310,25 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        -240,
+        -480,
         416
       ],
       "id": "77216ec3-a630-4a20-bacc-fbdf3746476e",
       "name": "Limit"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        656,
+        416
+      ],
+      "id": "4992ee08-b951-43bb-9d02-9711b8e9eeeb",
+      "name": "Aggregate1"
     }
   ],
   "connections": {
@@ -1347,7 +1347,7 @@
       "main": [
         [
           {
-            "node": "merge",
+            "node": "Aggregate1",
             "type": "main",
             "index": 0
           }
@@ -1839,6 +1839,17 @@
           }
         ]
       ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1852,7 +1863,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "fa3c4cdb-f680-4fa5-bfe0-a49b1dd94bae",
+  "versionId": "72df2912-2a09-4f5a-b21b-029435097cf7",
   "triggerCount": 0,
   "tags": [
     {
