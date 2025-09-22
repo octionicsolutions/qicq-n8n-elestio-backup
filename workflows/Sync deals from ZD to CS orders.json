@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:46:23.102Z",
-  "updatedAt": "2025-09-18T15:56:00.704Z",
+  "updatedAt": "2025-09-21T18:50:12.548Z",
   "id": "J5w7xv52mTvHunct",
   "name": "Sync deals from ZD to CS orders",
   "active": false,
@@ -620,20 +620,6 @@
       "name": "Sticky Note1"
     },
     {
-      "parameters": {
-        "content": "## ToDo\nSer error handling workflow",
-        "color": 3
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        160,
-        -160
-      ],
-      "typeVersion": 1,
-      "id": "1f69633a-5f9f-4cb3-9065-5420e82ddeb7",
-      "name": "Sticky Note2"
-    },
-    {
       "parameters": {},
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
@@ -862,7 +848,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "aa561a5f-e50a-46de-8e4b-f59883189933",
+  "versionId": "4e8b33d2-ab41-445c-b646-ae71b989606c",
   "triggerCount": 0,
   "tags": [
     {
