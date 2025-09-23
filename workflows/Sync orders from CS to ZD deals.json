@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-21T19:06:40.682Z",
+  "updatedAt": "2025-09-22T13:41:23.790Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -183,7 +183,7 @@
     },
     {
       "parameters": {
-        "errorMessage": "Contact coulnd not be found in ZD"
+        "errorMessage": "=Contact wit ID {{ $('CS Order Ref').item.json.customer_id }} could not be found in ZD"
       },
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
@@ -1259,39 +1259,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "eb50306e-33d4-44da-9cee-fbfe2468e9c7",
-              "leftValue": "={{ $json.status_id }}",
-              "rightValue": 5,
-              "operator": {
-                "type": "number",
-                "operation": "notEquals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        2672,
-        416
-      ],
-      "id": "4991a37d-bc22-4eaa-baa5-aac18c6d0583",
-      "name": "Only keep orders with a bike1"
-    },
-    {
-      "parameters": {
         "content": "## Set stage ID's\n\nExecute the node below and search within the result for the ID's of the stages listed in the set node",
         "height": 592,
         "width": 224
@@ -1329,6 +1296,39 @@
       ],
       "id": "4992ee08-b951-43bb-9d02-9711b8e9eeeb",
       "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb50306e-33d4-44da-9cee-fbfe2468e9c7",
+              "leftValue": "={{ $json.status_id }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2672,
+        416
+      ],
+      "id": "4991a37d-bc22-4eaa-baa5-aac18c6d0583",
+      "name": "Skip cancelled orders"
     }
   ],
   "connections": {
@@ -1800,7 +1800,7 @@
       "main": [
         [
           {
-            "node": "Only keep orders with a bike1",
+            "node": "Skip cancelled orders",
             "type": "main",
             "index": 0
           }
@@ -1812,17 +1812,6 @@
         [
           {
             "node": "Set Stage ID",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Only keep orders with a bike1": {
-      "main": [
-        [
-          {
-            "node": "Remove Duplicates",
             "type": "main",
             "index": 0
           }
@@ -1850,6 +1839,17 @@
           }
         ]
       ]
+    },
+    "Skip cancelled orders": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1862,8 +1862,14 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "72df2912-2a09-4f5a-b21b-029435097cf7",
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "b714b173-d815-4aa4-b1ad-b2281833c893",
   "triggerCount": 0,
   "tags": [
     {
