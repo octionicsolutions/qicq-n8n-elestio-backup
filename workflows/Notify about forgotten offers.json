@@ -1,0 +1,1564 @@
+{
+  "createdAt": "2025-09-29T11:31:03.461Z",
+  "updatedAt": "2025-09-29T11:40:55.753Z",
+  "id": "KiPJt5MptgpYyhQU",
+  "name": "Notify about forgotten offers",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.cyclesoftware.nl/api/v1/salesdata/orders.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "offset",
+              "value": "={{ $json.offset }}"
+            },
+            {
+              "name": "modified_start",
+              "value": "={{ $now.minus(29, 'days').format('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "modified_end",
+              "value": "={{ $now.format('yyyy-MM-dd') }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        192
+      ],
+      "id": "23320b3b-ed53-4775-a073-429794e444f7",
+      "name": "Cyclesoftware: Get recently updated orders",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "offset",
+              "value": "={{ $json.offset || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        192
+      ],
+      "id": "92e886a3-fae1-47f7-b108-876db0a9d9b4",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "offset",
+              "value": "={{ $('next').first().json.offset + 500 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ \n  $if(\n    $('next').item.json.data?.length,\n    $('next').item.json.data.append(...$json.data),\n    $json.data\n  ) \n}}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        192
+      ],
+      "id": "874fc723-f912-46bb-a313-562e33f21eae",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "26234167-6271-45eb-b676-d6704d65a209",
+              "leftValue": "={{ $('Cyclesoftware: Get recently updated orders').first().json }}",
+              "rightValue": 404,
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        192
+      ],
+      "id": "a2b65e4e-0ce3-4729-8ed3-080b51dc3c67",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        96
+      ],
+      "id": "137fad36-9243-40cf-904d-34a7128b5248",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "content": "Paginate until all items were retrieved which have been modified before the last stored timestamp",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -32,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "6c5c1343-105f-4030-9e22-bfce356dfde7",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        464,
+        192
+      ],
+      "id": "f0973d92-1d41-4331-9dd5-931cdee9c71c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        96
+      ],
+      "id": "2484f7a7-2b04-4f80-8868-59e1a37f7ecc",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "content": "If employee not found, send mail to Admin",
+        "height": 208,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5056,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "ce340b39-aa1b-47e0-b267-39847c5c7c50",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.datetime_created.toDateTime().format('yyyy-MM-dd') }}",
+                    "rightValue": "={{ $now.minus(1, 'weeks').format('yyyy-MM-dd') }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "equals"
+                    },
+                    "id": "e8beb98e-88ca-42d5-bde3-277ca910826b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1-week"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d8f7fed8-731c-4c75-9ca9-42d49c4f681d",
+                    "leftValue": "={{ $json.datetime_created.toDateTime().format('yyyy-MM-dd') }}",
+                    "rightValue": "={{ $now.minus(2, 'weeks').format('yyyy-MM-dd') }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2-weeks"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2b016afb-16ab-45ca-9ad3-27d83a887faf",
+                    "leftValue": "={{ $json.datetime_created.toDateTime().format('yyyy-MM-dd') }}",
+                    "rightValue": "={{ $now.minus(4, 'weeks').format('yyyy-MM-dd') }}",
+                    "operator": {
+                      "type": "dateTime",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4-weeks"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1984,
+        80
+      ],
+      "id": "0b32336a-6873-43c4-8b03-000cd100a6df",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Cyclesoftware meldingen <octionicsolutions@gmail.com>",
+        "toEmail": "={{ $json.recipient }}",
+        "subject": "Openstaande offertes",
+        "html": "={{ $('Mail body').first().json.html.replaceAll('[[TABLE]]', $('Generate table').item.json.table) }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        5344,
+        208
+      ],
+      "id": "aa0c2b71-ef9d-4364-9e38-2243da9591f4",
+      "name": "Send email",
+      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2448,
+        80
+      ],
+      "id": "cff8b150-3cf9-4ad8-aee7-1baff1e821b1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const grouped = {};\n\nfor (const item of items) {\n  const { sales_employee_id } = item.json;\n  if (!grouped[sales_employee_id]) {\n    grouped[sales_employee_id] = [];\n  }\n  grouped[sales_employee_id].push(item.json);\n}\n\nreturn Object.values(grouped).map(group => ({\n  json: { group }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3344,
+        96
+      ],
+      "id": "11f8d346-d918-4c15-9822-ebb4e45c3443",
+      "name": "Group by employee ID"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3552,
+        96
+      ],
+      "id": "59ae4300-ab18-4efb-9076-0220db3649e3",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "group",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        96
+      ],
+      "id": "e1124748-daef-4b2d-93cf-1fb88e78b0a5",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "sales_order_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        96
+      ],
+      "id": "5e47433d-d60b-4736-89d5-b280ed9f2aac",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ceeaa41a-5ef8-4174-97d5-1e0b78864364",
+              "name": "Offerte",
+              "value": "=<a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $json.sales_order_id }}\">{{ $json.sales_order_id }}</a>",
+              "type": "string"
+            },
+            {
+              "id": "2ef6a3bc-da9d-4557-bca7-fd9182254efe",
+              "name": "Klant",
+              "value": "=<a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $json.customer_id }}/details/\">{{ $json.customer_name }}</a>",
+              "type": "string"
+            },
+            {
+              "id": "9557a27a-ad04-4b1c-ab83-11ea8bbde9eb",
+              "name": "Open sinds",
+              "value": "=<b>{{ $json.open_since_weeks }} {{ $json.open_since_weeks == 1 ? 'week' : 'weken' }}</b>",
+              "type": "string"
+            },
+            {
+              "id": "d8f62ecb-8880-4b90-bb30-7bb1e9d74f6e",
+              "name": "Status",
+              "value": "={{ $json.status_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4000,
+        96
+      ],
+      "id": "7bf26c6b-9777-4be8-a48b-74463c3c7c06",
+      "name": "Prepare selected fields"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n\n    <h1>De volgende offertes staan al een tijdje open</h1>\n    \n    [[TABLE]]\n\n</body>\n</html>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        192
+      ],
+      "id": "d4e8e4e4-c7a6-417f-a7ea-fa02ba857d01",
+      "name": "Mail body"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        96
+      ],
+      "id": "3c4a1380-a14e-48ec-93fc-3f375741a04a",
+      "name": "Order ref"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $json.customer_id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2896,
+        96
+      ],
+      "id": "60c1acb4-c34c-4866-b3d9-d6c90d3d5425",
+      "name": "Cyclesoftware: Get customer by ID",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a67603b-ad41-432b-ad6b-9393471bf30b",
+              "name": "sales_order_id",
+              "value": "={{ $('Order ref').item.json.sales_order_id }}",
+              "type": "number"
+            },
+            {
+              "id": "65e9de3e-f823-45d1-a0bc-e5832eac4c06",
+              "name": "customer_id",
+              "value": "={{ $('Order ref').item.json.customer_id }}",
+              "type": "number"
+            },
+            {
+              "id": "83c536c1-bc99-4a92-8dc8-f145ecfae082",
+              "name": "sales_employee_id",
+              "value": "={{ $('Order ref').item.json.sales_employee_id }}",
+              "type": "number"
+            },
+            {
+              "id": "427ca260-fa6a-46ea-851f-d3f330941cf4",
+              "name": "open_since_weeks",
+              "value": "={{ $('Order ref').item.json.open_since_weeks }}",
+              "type": "number"
+            },
+            {
+              "id": "b024160f-21d0-4c2f-98b8-bfb0d2b8b5f8",
+              "name": "customer_name",
+              "value": "={{ $json.first_name }} {{ $json.name }}{{ $if($json.company_name.isEmpty(), \"\", \" (\" + $json.company_name + \")\") }}",
+              "type": "string"
+            },
+            {
+              "id": "f03b33a2-0857-47f9-bae8-a261e84b2b34",
+              "name": "status_text",
+              "value": "={{ $('Order ref').item.json.status_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3120,
+        96
+      ],
+      "id": "0f830b6b-a85e-4f30-aa76-2c93addf5fdb",
+      "name": "Format items"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9aBo0h3NeWXtmaCJ",
+          "mode": "list",
+          "cachedResultName": "Ask admin to map missing employee"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "employee_id": "={{ $('Split Out1').first().json.sales_employee_id }}"
+          },
+          "matchingColumns": [
+            "employee_id"
+          ],
+          "schema": [
+            {
+              "id": "employee_id",
+              "displayName": "employee_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4896,
+        208
+      ],
+      "id": "c7803e94-110d-4c30-9154-b8d5535315ad",
+      "name": "Ask admin to map missing employee"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0cfed987-5920-488e-8134-caed66542028",
+              "name": "admin_email_address",
+              "value": "tommy@qicq.nl",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -416,
+        192
+      ],
+      "id": "fb628f8d-4e7f-46a2-ac9f-a7dbf22217c2",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "content": "## Set Globals",
+        "height": 240,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        112
+      ],
+      "typeVersion": 1,
+      "id": "6f68e536-497d-4258-8e6b-1ff90729115e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pvbtn5wpkdg7k83",
+        "table": "melmse5ylbfj5j5",
+        "limit": 1,
+        "options": {
+          "where": "=(Employee ID,eq,{{ $('Split Out1').first().json.sales_employee_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        4448,
+        96
+      ],
+      "id": "8ead0d83-04df-47d4-b6b6-9e4a7e77b699",
+      "name": "Search for employee in enrichment table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "CQLSeglcJKiCKe3S",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c165fba-6a65-4193-a725-f533f35332d6",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4656,
+        96
+      ],
+      "id": "7c8b5e91-aa06-4c3c-93d9-a0d50dbdf5fc",
+      "name": "If employee found"
+    },
+    {
+      "parameters": {
+        "operation": "convertToHtmlTable",
+        "options": {
+          "cellAttributes": "width=\"150\""
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        4224,
+        96
+      ],
+      "id": "fb2a3f0c-c600-4721-b248-f3696db8aa38",
+      "name": "Generate table"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6f376f7-9da7-4f8d-8623-0ef3edd32a83",
+              "name": "recipient",
+              "value": "={{ $('Search for employee in enrichment table').item.json.Email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5120,
+        -32
+      ],
+      "id": "f031eae6-7c80-4eac-8f92-a46952afe8ef",
+      "name": "Prepare mail"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6f376f7-9da7-4f8d-8623-0ef3edd32a83",
+              "name": "recipient",
+              "value": "={{ $('Globals').first().json.admin_email_address}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        5120,
+        208
+      ],
+      "id": "b11cf64b-49eb-477f-a085-d0976c7e8412",
+      "name": "Prepare mail1"
+    },
+    {
+      "parameters": {
+        "operation": "convertToHtmlTable",
+        "options": {
+          "cellAttributes": "width=\"150\""
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        3120,
+        368
+      ],
+      "id": "fe98f498-5969-441f-8bf8-8111b60dac9b",
+      "name": "Generate table1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8281098b-2fac-45a3-b35c-429cbd808b23",
+              "name": "open_since_weeks",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2224,
+        -80
+      ],
+      "id": "939a8ec4-85c8-40b4-b737-3919997805ff",
+      "name": "Set period: 1 week"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8281098b-2fac-45a3-b35c-429cbd808b23",
+              "name": "open_since_weeks",
+              "value": 2,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2224,
+        96
+      ],
+      "id": "72f5921e-cafa-405a-9ad5-1d596404ef9e",
+      "name": "Set period: 2 weeks"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8281098b-2fac-45a3-b35c-429cbd808b23",
+              "name": "open_since_weeks",
+              "value": 4,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2224,
+        272
+      ],
+      "id": "dc24dafa-ec85-4b9f-b363-ae2cf2266260",
+      "name": "Set period: 4 weeks"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $json.customer_id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        368
+      ],
+      "id": "41ead99e-d8d2-46e5-a3ec-cc0fa73af778",
+      "name": "Cyclesoftware: Get customer by ID1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a67603b-ad41-432b-ad6b-9393471bf30b",
+              "name": "sales_order_id",
+              "value": "={{ $('Set period: 4 weeks').item.json.sales_order_id }}",
+              "type": "number"
+            },
+            {
+              "id": "65e9de3e-f823-45d1-a0bc-e5832eac4c06",
+              "name": "customer_id",
+              "value": "={{ $('Set period: 4 weeks').item.json.customer_id }}",
+              "type": "number"
+            },
+            {
+              "id": "83c536c1-bc99-4a92-8dc8-f145ecfae082",
+              "name": "sales_employee_id",
+              "value": "={{ $('Set period: 4 weeks').item.json.sales_employee_id }}",
+              "type": "number"
+            },
+            {
+              "id": "427ca260-fa6a-46ea-851f-d3f330941cf4",
+              "name": "open_since_weeks",
+              "value": "={{ $('Set period: 4 weeks').item.json.open_since_weeks }}",
+              "type": "number"
+            },
+            {
+              "id": "b024160f-21d0-4c2f-98b8-bfb0d2b8b5f8",
+              "name": "customer_name",
+              "value": "={{ $json.first_name }} {{ $json.name }}{{ $if($json.company_name.isEmpty(), \"\", \" (\" + $json.company_name + \")\") }}",
+              "type": "string"
+            },
+            {
+              "id": "f03b33a2-0857-47f9-bae8-a261e84b2b34",
+              "name": "status_text",
+              "value": "={{ $('Set period: 4 weeks').item.json.status_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2672,
+        368
+      ],
+      "id": "58859621-d4c3-4240-ad1c-c7990abdbb99",
+      "name": "Format items1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ceeaa41a-5ef8-4174-97d5-1e0b78864364",
+              "name": "Offerte",
+              "value": "=<a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $json.sales_order_id }}\">{{ $json.sales_order_id }}</a>",
+              "type": "string"
+            },
+            {
+              "id": "2ef6a3bc-da9d-4557-bca7-fd9182254efe",
+              "name": "Klant",
+              "value": "=<a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $json.customer_id }}/details/\">{{ $json.customer_name }}</a>",
+              "type": "string"
+            },
+            {
+              "id": "9557a27a-ad04-4b1c-ab83-11ea8bbde9eb",
+              "name": "Open sinds",
+              "value": "=<b>{{ $json.open_since_weeks }} {{ $json.open_since_weeks == 1 ? 'week' : 'weken' }}</b>",
+              "type": "string"
+            },
+            {
+              "id": "d8f62ecb-8880-4b90-bb30-7bb1e9d74f6e",
+              "name": "Status",
+              "value": "={{ $json.status_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2896,
+        368
+      ],
+      "id": "304f814a-7d91-4336-838f-8e0b6b99be4f",
+      "name": "Prepare selected fields1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Cyclesoftware meldingen <octionicsolutions@gmail.com>",
+        "toEmail": "={{ $('Globals').first().json.admin_email_address }}",
+        "subject": "4 weken openstaande offertes",
+        "html": "={{ $('Mail body').first().json.html.replaceAll('[[TABLE]]', $json.table) }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        3344,
+        368
+      ],
+      "id": "1deaccc4-bc87-4e4a-b88b-6d5f2e1a58e7",
+      "name": "Send email to admin",
+      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6eff9d34-7985-47fb-8e25-8570d9b91c21",
+              "leftValue": "={{ $json.order_type_id }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        96
+      ],
+      "id": "599ea24c-1987-4f05-ae38-b3506bf074eb",
+      "name": "Only keep offers"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 58
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        192
+      ],
+      "id": "15fa2673-f09d-4459-9157-f1420aea600e",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Cyclesoftware: Get recently updated orders": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get recently updated orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Only keep offers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Set period: 1 week",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set period: 2 weeks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set period: 4 weeks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Order ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group by employee ID": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Prepare selected fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare selected fields": {
+      "main": [
+        [
+          {
+            "node": "Generate table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mail body": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order ref": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get customer by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get customer by ID": {
+      "main": [
+        [
+          {
+            "node": "Format items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format items": {
+      "main": [
+        [
+          {
+            "node": "Group by employee ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask admin to map missing employee": {
+      "main": [
+        [
+          {
+            "node": "Prepare mail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Mail body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for employee in enrichment table": {
+      "main": [
+        [
+          {
+            "node": "If employee found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If employee found": {
+      "main": [
+        [
+          {
+            "node": "Prepare mail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ask admin to map missing employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate table": {
+      "main": [
+        [
+          {
+            "node": "Search for employee in enrichment table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare mail": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare mail1": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate table1": {
+      "main": [
+        [
+          {
+            "node": "Send email to admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set period: 1 week": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set period: 2 weeks": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set period: 4 weeks": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          },
+          {
+            "node": "Cyclesoftware: Get customer by ID1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get customer by ID1": {
+      "main": [
+        [
+          {
+            "node": "Format items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format items1": {
+      "main": [
+        [
+          {
+            "node": "Prepare selected fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare selected fields1": {
+      "main": [
+        [
+          {
+            "node": "Generate table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep offers": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "timeSavedPerExecution": 10
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "45a9e07f-1f2d-4b48-b1be-6e929da068f3",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-09-29T11:31:03.461Z",
+      "updatedAt": "2025-09-29T11:31:03.461Z",
+      "role": "workflow:owner",
+      "workflowId": "KiPJt5MptgpYyhQU",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
