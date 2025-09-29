@@ -1,0 +1,293 @@
+{
+  "createdAt": "2025-09-29T11:20:55.720Z",
+  "updatedAt": "2025-09-29T11:26:26.108Z",
+  "id": "9aBo0h3NeWXtmaCJ",
+  "name": "Ask admin to map missing employee",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "employee_id",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "54bc300c-7c0f-49c8-bacf-ad0665822846",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -160,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "fromEmail": "Admin Notifications <octionicsolutions@gmail.com>",
+        "toEmail": "={{ $json.admin_email_address }}",
+        "subject": "=Missing Employee Mapping for ID {{ $('When Executed by Another Workflow').item.json.employee_id }}",
+        "message": "=Please fill in the details for the employee with Cyclesoftware Employee ID {{ $('When Executed by Another Workflow').item.json.employee_id }}",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        80
+      ],
+      "id": "eb8c49f1-625b-4d18-aa33-ee745dd64042",
+      "name": "SendAndWait email",
+      "webhookId": "c7bf4f5e-1f1f-4c26-bde8-0faa18e3fd3b",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pvbtn5wpkdg7k83",
+        "table": "melmse5ylbfj5j5",
+        "limit": 1,
+        "options": {
+          "where": "=(Employee ID,eq,{{ $('When Executed by Another Workflow').item.json.employee_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        512,
+        80
+      ],
+      "id": "721b3218-ee99-4dfc-b4fc-a87a0149ad95",
+      "name": "Search for entry by employee ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "CQLSeglcJKiCKe3S",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "af648818-9eae-446a-9ccb-aefb29087716",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        80
+      ],
+      "id": "555fe5ee-e886-4149-b7ff-4ebbfe978704",
+      "name": "Continue if not found"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "create",
+        "projectId": "pvbtn5wpkdg7k83",
+        "table": "melmse5ylbfj5j5",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Employee ID",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.employee_id }}"
+            },
+            {
+              "fieldName": "Name",
+              "fieldValue": "={{ $('SendAndWait email').item.json.data.Name }}"
+            },
+            {
+              "fieldName": "Email",
+              "fieldValue": "={{ $('SendAndWait email').item.json.data.Email }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        960,
+        80
+      ],
+      "id": "ccc02d84-4ed8-41d2-b149-3be8f517dad6",
+      "name": "Create a row",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "CQLSeglcJKiCKe3S",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Set Globals",
+        "height": 240,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "f41b06f7-ca9b-4b47-ba12-705f3f3c1b7d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0cfed987-5920-488e-8134-caed66542028",
+              "name": "admin_email_address",
+              "value": "tommy@qicq.nl",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        80
+      ],
+      "id": "fb1770ab-77fe-4e09-99f7-a35d67079bcd",
+      "name": "Globals"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendAndWait email": {
+      "main": [
+        [
+          {
+            "node": "Search for entry by employee ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for entry by employee ID": {
+      "main": [
+        [
+          {
+            "node": "Continue if not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue if not found": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "SendAndWait email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4c395f02-421f-445e-b3ef-80e601315026",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-09-29T11:20:55.720Z",
+      "updatedAt": "2025-09-29T11:20:55.720Z",
+      "role": "workflow:owner",
+      "workflowId": "9aBo0h3NeWXtmaCJ",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
