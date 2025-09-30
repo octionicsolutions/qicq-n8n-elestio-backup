@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-29T11:31:03.461Z",
-  "updatedAt": "2025-09-29T11:40:55.753Z",
+  "updatedAt": "2025-09-29T13:05:42.727Z",
   "id": "KiPJt5MptgpYyhQU",
   "name": "Notify about forgotten offers",
   "active": true,
@@ -331,7 +331,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "Cyclesoftware meldingen <octionicsolutions@gmail.com>",
+        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
         "toEmail": "={{ $json.recipient }}",
         "subject": "Openstaande offertes",
         "html": "={{ $('Mail body').first().json.html.replaceAll('[[TABLE]]', $('Generate table').item.json.table) }}",
@@ -1026,7 +1026,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "Cyclesoftware meldingen <octionicsolutions@gmail.com>",
+        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
         "toEmail": "={{ $('Globals').first().json.admin_email_address }}",
         "subject": "4 weken openstaande offertes",
         "html": "={{ $('Mail body').first().json.html.replaceAll('[[TABLE]]', $json.table) }}",
@@ -1540,7 +1540,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "45a9e07f-1f2d-4b48-b1be-6e929da068f3",
+  "versionId": "60eb0521-8e63-43a6-a62f-a2e17d422004",
   "triggerCount": 1,
   "tags": [],
   "shared": [
