@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-23T21:37:04.185Z",
+  "updatedAt": "2025-09-29T13:11:08.579Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -1329,6 +1329,35 @@
       ],
       "id": "4991a37d-bc22-4eaa-baa5-aac18c6d0583",
       "name": "Skip cancelled orders"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SNaq9bZVQ31qO1MX",
+          "mode": "list",
+          "cachedResultName": "Notify about ready orders"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3088,
+        624
+      ],
+      "id": "ee78a1f3-d397-45df-b131-fd87921f7c90",
+      "name": "Call 'Notify about ready orders'"
     }
   ],
   "connections": {
@@ -1337,6 +1366,11 @@
         [
           {
             "node": "Calc total value",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'Notify about ready orders'",
             "type": "main",
             "index": 0
           }
@@ -1869,7 +1903,7 @@
       }
     ]
   },
-  "versionId": "fd8b0927-fc0d-4a0c-b26a-c6135bb630f4",
+  "versionId": "e4996a82-283c-432e-ba0e-2ef15715a6c0",
   "triggerCount": 0,
   "tags": [
     {
