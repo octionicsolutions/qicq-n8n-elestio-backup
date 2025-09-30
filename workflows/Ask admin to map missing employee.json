@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-29T11:20:55.720Z",
-  "updatedAt": "2025-09-29T11:26:26.108Z",
+  "updatedAt": "2025-09-29T13:05:19.811Z",
   "id": "9aBo0h3NeWXtmaCJ",
   "name": "Ask admin to map missing employee",
   "active": false,
@@ -29,7 +29,7 @@
     {
       "parameters": {
         "operation": "sendAndWait",
-        "fromEmail": "Admin Notifications <octionicsolutions@gmail.com>",
+        "fromEmail": "Admin Notifications <system@qicq.nl>",
         "toEmail": "={{ $json.admin_email_address }}",
         "subject": "=Missing Employee Mapping for ID {{ $('When Executed by Another Workflow').item.json.employee_id }}",
         "message": "=Please fill in the details for the employee with Cyclesoftware Employee ID {{ $('When Executed by Another Workflow').item.json.employee_id }}",
@@ -269,7 +269,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "4c395f02-421f-445e-b3ef-80e601315026",
+  "versionId": "fbdc3748-235e-4466-b893-9d49e82ed58c",
   "triggerCount": 0,
   "tags": [],
   "shared": [
