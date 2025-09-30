@@ -1,0 +1,578 @@
+{
+  "createdAt": "2025-09-29T13:06:32.744Z",
+  "updatedAt": "2025-09-29T13:11:32.323Z",
+  "id": "SNaq9bZVQ31qO1MX",
+  "name": "Notify about ready orders",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        304
+      ],
+      "id": "05570cdd-2c7b-4918-8a7a-a38d2a419df4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "content": "Gets triggered by sync workflow",
+        "height": 240,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "a61054df-0f3b-4d39-a07a-2f5cd0450434",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Store IDs of already notified items in Redis list. Delete from Redis list, if status changed again",
+        "height": 480,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        96
+      ],
+      "id": "5c4f84a6-0150-4b6e-ad37-7ab1ec993747",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d72fb603-8b53-4ccc-8cc1-dc9e1252fcf1",
+              "leftValue": "={{ $json.status_id }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        304
+      ],
+      "id": "e870aa55-9447-44bd-b3e8-a8ef778bb3ae",
+      "name": "If status ready"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "sales_order_id",
+        "key": "=notification_ready_order_{{ $json.sales_order_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        176,
+        208
+      ],
+      "id": "4a02fc1c-f681-4e9f-a434-b8f4fb417479",
+      "name": "Search for order id",
+      "alwaysOutputData": true,
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=notification_ready_order_{{ $json.sales_order_id }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        176,
+        400
+      ],
+      "id": "058a84f3-bc2f-4db3-a9d2-db398c6ee8f3",
+      "name": "Delete order id",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "60b8e618-814e-446b-aeb0-732fc8d8a9b0",
+              "leftValue": "={{ $json.sales_order_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        208
+      ],
+      "id": "98f91acc-50e7-4a85-96cf-1504513c84fc",
+      "name": "Only continue if not stored previously"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        208
+      ],
+      "id": "9c6bca6f-5d19-4de7-bf77-7ac3f2dd500d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
+        "toEmail": "={{ $('Search for employee in enrichment table').item.json.Email }}",
+        "subject": "Klaarstaande bestellingen",
+        "html": "=<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n\n    <h1>De volgende bestelling is nu klaar</h1>\n    \n    <table border=\"0\">\n      <tr>\n        <th style=\"text-align:left; width:120px;\">Bestelling</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $('When Executed by Another Workflow').item.json.sales_order_id }}\">{{ $('When Executed by Another Workflow').item.json.sales_order_id }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Klant</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $('When Executed by Another Workflow').item.json.customer_id }}/details/\">{{ $('Format items').item.json.customer_name }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Status</th>\n        <td>Staat klaar</td>\n      </tr>\n    </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1744,
+        112
+      ],
+      "id": "d4919662-2cd2-4791-a60e-1677b80bf965",
+      "name": "Send email",
+      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
+      "credentials": {
+        "smtp": {
+          "id": "AnkL8yTTUtlbQMXr",
+          "name": "SMTP Elestio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9aBo0h3NeWXtmaCJ",
+          "mode": "list",
+          "cachedResultName": "Ask admin to map missing employee"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "employee_id": "={{ $('When Executed by Another Workflow').item.json.sales_employee_id }}"
+          },
+          "matchingColumns": [
+            "employee_id"
+          ],
+          "schema": [
+            {
+              "id": "employee_id",
+              "displayName": "employee_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1744,
+        320
+      ],
+      "id": "2d5c08d7-28d5-4628-9605-0b8638bfdfa7",
+      "name": "Ask admin to map missing employee"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "pvbtn5wpkdg7k83",
+        "table": "melmse5ylbfj5j5",
+        "limit": 1,
+        "options": {
+          "where": "=(Employee ID,eq,{{ $('When Executed by Another Workflow').item.json.sales_employee_id }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1296,
+        208
+      ],
+      "id": "ff931fcf-546b-4c9e-8f34-1d355eba371b",
+      "name": "Search for employee in enrichment table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "CQLSeglcJKiCKe3S",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c165fba-6a65-4193-a725-f533f35332d6",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        208
+      ],
+      "id": "3f04f4da-2f7e-4f55-8494-cda5439688fd",
+      "name": "If employee found"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=notification_ready_order_{{ $('When Executed by Another Workflow').item.json.sales_order_id }}",
+        "value": "={{ $now.toISO() }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        320
+      ],
+      "id": "78156932-9799-4864-874f-9936f76eda27",
+      "name": "Store order id",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $('When Executed by Another Workflow').item.json.customer_id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        208
+      ],
+      "id": "1bb49ef2-290b-4834-be92-08167318272c",
+      "name": "Cyclesoftware: Get customer by ID",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b024160f-21d0-4c2f-98b8-bfb0d2b8b5f8",
+              "name": "customer_name",
+              "value": "={{ $json.first_name }} {{ $json.name }}{{ $if($json.company_name.isEmpty(), \"\", \" (\" + $json.company_name + \")\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        208
+      ],
+      "id": "9a4d4e25-28f1-48d5-b5cc-670cbe23d86d",
+      "name": "Format items"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "If status ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If status ready": {
+      "main": [
+        [
+          {
+            "node": "Search for order id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete order id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for order id": {
+      "main": [
+        [
+          {
+            "node": "Only continue if not stored previously",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only continue if not stored previously": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Cyclesoftware: Get customer by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Store order id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask admin to map missing employee": {
+      "main": [
+        [
+          {
+            "node": "Store order id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search for employee in enrichment table": {
+      "main": [
+        [
+          {
+            "node": "If employee found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If employee found": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ask admin to map missing employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store order id": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get customer by ID": {
+      "main": [
+        [
+          {
+            "node": "Format items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format items": {
+      "main": [
+        [
+          {
+            "node": "Search for employee in enrichment table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "aa6b54f0-a0fe-4d53-83df-54fafc406650",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-09-29T13:06:32.744Z",
+      "updatedAt": "2025-09-29T13:06:32.744Z",
+      "role": "workflow:owner",
+      "workflowId": "SNaq9bZVQ31qO1MX",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
