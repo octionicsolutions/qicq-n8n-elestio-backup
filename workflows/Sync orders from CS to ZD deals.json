@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-09-29T13:11:08.579Z",
+  "updatedAt": "2025-10-01T20:27:09.957Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -734,6 +734,12 @@
               "name": "stage_id_won",
               "value": 119628,
               "type": "number"
+            },
+            {
+              "id": "d7132f7d-3956-40ea-8066-fd3d16653b30",
+              "name": "stage_id_lost",
+              "value": "119630",
+              "type": "string"
             }
           ]
         },
@@ -1903,7 +1909,7 @@
       }
     ]
   },
-  "versionId": "e4996a82-283c-432e-ba0e-2ef15715a6c0",
+  "versionId": "89f83140-d9c1-46b3-8f33-a7917c2c4863",
   "triggerCount": 0,
   "tags": [
     {
