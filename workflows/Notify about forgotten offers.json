@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-29T11:31:03.461Z",
-  "updatedAt": "2025-09-29T13:05:42.727Z",
+  "updatedAt": "2025-10-09T13:57:40.098Z",
   "id": "KiPJt5MptgpYyhQU",
   "name": "Notify about forgotten offers",
   "active": true,
@@ -1540,9 +1540,16 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "60eb0521-8e63-43a6-a62f-a2e17d422004",
+  "versionId": "19bccd0a-db95-49f5-a78b-2d87ac953004",
   "triggerCount": 1,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:13:03.391Z",
+      "updatedAt": "2025-07-18T18:13:03.391Z",
+      "id": "9Unu8zOsMe5ug14X",
+      "name": "main"
+    }
+  ],
   "shared": [
     {
       "createdAt": "2025-09-29T11:31:03.461Z",
