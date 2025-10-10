@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-29T13:06:32.744Z",
-  "updatedAt": "2025-09-29T13:11:32.323Z",
+  "updatedAt": "2025-10-09T13:57:33.286Z",
   "id": "SNaq9bZVQ31qO1MX",
   "name": "Notify about ready orders",
   "active": false,
@@ -554,9 +554,16 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "aa6b54f0-a0fe-4d53-83df-54fafc406650",
+  "versionId": "2bad6aad-c37a-469b-9742-ce83fe6be7b9",
   "triggerCount": 0,
-  "tags": [],
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:06:55.321Z",
+      "updatedAt": "2025-07-18T18:06:55.321Z",
+      "id": "O8Gvscx6k1IxcC6a",
+      "name": "sub"
+    }
+  ],
   "shared": [
     {
       "createdAt": "2025-09-29T13:06:32.744Z",
