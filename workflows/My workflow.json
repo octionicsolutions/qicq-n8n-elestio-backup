@@ -1,0 +1,84 @@
+{
+  "createdAt": "2025-10-11T18:06:44.396Z",
+  "updatedAt": "2025-10-11T18:07:39.912Z",
+  "id": "BlRAavUN7FEM0slj",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c789b8b6-8894-47ca-94fc-195ba90e70c5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "keys",
+        "keyPattern": "*",
+        "getValues": false
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0c3eadfd-4681-4f32-92db-5d1799f07b66",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b7711cb7-5ab4-48cf-ba8c-b7b82f954130",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-10-11T18:06:44.396Z",
+      "updatedAt": "2025-10-11T18:06:44.396Z",
+      "role": "workflow:owner",
+      "workflowId": "BlRAavUN7FEM0slj",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
