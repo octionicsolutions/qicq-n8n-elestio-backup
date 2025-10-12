@@ -1,66 +1,11 @@
 {
   "createdAt": "2025-09-17T11:46:23.102Z",
-  "updatedAt": "2025-09-21T18:50:12.548Z",
+  "updatedAt": "2025-10-11T20:08:14.621Z",
   "id": "J5w7xv52mTvHunct",
   "name": "Sync deals from ZD to CS orders",
   "active": false,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {
-        "url": "https://api.getbase.com/v2/deals",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "sort_by",
-              "value": "=last_stage_change_at:desc"
-            },
-            {
-              "name": "page",
-              "value": "={{ $json.page }}"
-            }
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Accept",
-              "value": "application/json"
-            },
-            {
-              "name": "User-Agent",
-              "value": "YourAppName/1.0"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "fullResponse": true
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        896,
-        160
-      ],
-      "id": "94086fb1-d7af-4640-b972-b52019e301eb",
-      "name": "Zendesk: Get recently updated contacts",
-      "alwaysOutputData": true,
-      "credentials": {
-        "httpBearerAuth": {
-          "id": "LsYF5cN5nkb0vjbk",
-          "name": "Zendesk Sell (PROD)"
-        }
-      }
-    },
     {
       "parameters": {
         "content": "Paginate until all timestamps found are older then previously stored one",
@@ -111,7 +56,7 @@
           "conditions": [
             {
               "id": "1a1c94ef-d080-4a20-bcb6-7ba12375a405",
-              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items }}",
+              "leftValue": "={{ $('Zendesk: Get recently updated deals').item.json.body.items }}",
               "rightValue": "",
               "operator": {
                 "type": "array",
@@ -121,7 +66,7 @@
             },
             {
               "id": "26234167-6271-45eb-b676-d6704d65a209",
-              "leftValue": "={{ $('Zendesk: Get recently updated contacts').item.json.body.items.last().data.last_stage_change_at.toDateTime() }}",
+              "leftValue": "={{ $('Zendesk: Get recently updated deals').item.json.body.items.last().data.last_stage_change_at.toDateTime() }}",
               "rightValue": "={{ $('Get last updated timestamp').item.json.zd_deals_last_update?.toDateTime() }}",
               "operator": {
                 "type": "dateTime",
@@ -629,20 +574,64 @@
       ],
       "id": "573b4de6-0cce-4793-8d99-18275c72eeb5",
       "name": "Limit"
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deals",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "sort_by",
+              "value": "=last_stage_change_at:desc"
+            },
+            {
+              "name": "page",
+              "value": "={{ $json.page }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        160
+      ],
+      "id": "94086fb1-d7af-4640-b972-b52019e301eb",
+      "name": "Zendesk: Get recently updated deals",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
     }
   ],
   "connections": {
-    "Zendesk: Get recently updated contacts": {
-      "main": [
-        [
-          {
-            "node": "merge",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get last updated timestamp": {
       "main": [
         [
@@ -703,7 +692,7 @@
       "main": [
         [
           {
-            "node": "Zendesk: Get recently updated contacts",
+            "node": "Zendesk: Get recently updated deals",
             "type": "main",
             "index": 0
           }
@@ -835,6 +824,17 @@
           }
         ]
       ]
+    },
+    "Zendesk: Get recently updated deals": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -848,7 +848,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "4e8b33d2-ab41-445c-b646-ae71b989606c",
+  "versionId": "94fedd7a-68de-4d47-aa52-f432871a27e8",
   "triggerCount": 0,
   "tags": [
     {
