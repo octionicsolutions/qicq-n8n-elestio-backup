@@ -1,0 +1,1397 @@
+{
+  "createdAt": "2025-10-24T13:27:26.969Z",
+  "updatedAt": "2025-10-24T13:43:13.804Z",
+  "id": "nWfLOkdzy8X7hjMp",
+  "name": "Notify about deleted ZD tasks",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Paginate until all timestamps found are older then a predefined period",
+        "height": 280,
+        "width": 880,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3632,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "07bef2ed-2dfd-440f-bb25-d4ff3dfc210e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1a1c94ef-d080-4a20-bcb6-7ba12375a405",
+              "leftValue": "={{ $('Zendesk: Get tasks').item.json.body.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2912,
+        432
+      ],
+      "id": "d33f2e10-f659-41b0-a6c9-9c63ccf5483d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65e0302f-4698-4009-abff-5e6fa543d620",
+              "name": "data",
+              "value": "={{ $('merge').item.json.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2688,
+        336
+      ],
+      "id": "4da42abf-9a3c-4131-8edc-dcf4e8f3f098",
+      "name": "Result"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc68b441-db36-4479-ac64-78e06a2189c7",
+              "name": "page",
+              "value": "={{ $('next').item.json.page + 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "03d6d21d-0fd3-43fb-b494-ecb11b2a4e23",
+              "name": "data",
+              "value": "={{ $('next').item.json.data.concat($json.body.items) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3136,
+        432
+      ],
+      "id": "dacf3351-0207-4684-96ff-1b31ebdd9266",
+      "name": "merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "515898e0-64c1-4e6e-b3bb-6694ed7a5f53",
+              "name": "page",
+              "value": "={{ $json.page || 1 }}",
+              "type": "number"
+            },
+            {
+              "id": "e7684eee-325e-450d-a446-f1b7177eae0f",
+              "name": "data",
+              "value": "={{ $json.data || [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3568,
+        432
+      ],
+      "id": "959b8c13-98ab-4d27-8838-1acbc4d1366d",
+      "name": "next"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2464,
+        336
+      ],
+      "id": "4df6136d-114e-476b-a34a-965f6466f42a",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1792,
+        448
+      ],
+      "id": "60c14911-d1bc-4c1c-85ae-6651959cce68",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "triggerAtMinute": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4016,
+        432
+      ],
+      "id": "03940701-cf4c-454c-bfcf-244797fb7341",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72e9bd63-4591-44ab-86d4-3c0e9f70aaf9",
+              "name": "id",
+              "value": "={{ $('Split Out1').item.json.data.id.toString() }}",
+              "type": "string"
+            },
+            {
+              "id": "7762d401-95f7-4939-b9f5-0494488125a0",
+              "name": "data",
+              "value": "={{ $('Split Out1').item.json.data.toJsonString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2016,
+        448
+      ],
+      "id": "0a85b695-e8aa-4d9f-b47e-b12daca8bb82",
+      "name": "Prepare objects"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72e9bd63-4591-44ab-86d4-3c0e9f70aaf9",
+              "name": "id",
+              "value": "={{ $json.data.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2240,
+        336
+      ],
+      "id": "3201078c-adc6-4361-ba2d-6f0d3348f321",
+      "name": "Reduce payload"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "notification_deleted_zd_tasks_previous_set",
+        "value": "={{ $json.data.reduce((acc, item) => { acc[item.id] = item.data; return acc; }, {}) }}",
+        "keyType": "hash"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        448
+      ],
+      "id": "d612f71f-74d9-4a94-89df-70190344d7e2",
+      "name": "Store all IDs for the next run",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1be44997-9903-4e05-b13e-c56b900b90df",
+              "leftValue": "={{ $('New IDs').item.json.id }}",
+              "rightValue": "={{ $json.ids.toNumber() }}",
+              "operator": {
+                "type": "array",
+                "operation": "notContains",
+                "rightType": "any"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        224
+      ],
+      "id": "6e768483-0a47-4c11-9844-65b23ae4d409",
+      "name": "Missing from previous set"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "notification_deleted_zd_tasks_previous_set",
+        "key": "notification_deleted_zd_tasks_previous_set",
+        "keyType": "hash",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1792,
+        224
+      ],
+      "id": "95a924ef-df2f-4179-bc97-eff23142a8c3",
+      "name": "Get IDs from previous run",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        224
+      ],
+      "id": "e3ee4f5f-6f5f-441d-8d7d-da692395b09b",
+      "name": "New IDs"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c9a121e-1bfd-4564-a19e-07803ff24c97",
+              "name": "ids",
+              "value": "={{ $json.notification_deleted_zd_tasks_previous_set.keys() }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1568,
+        224
+      ],
+      "id": "f89577d7-dca8-4205-825a-b61b768c547d",
+      "name": "Previous IDs"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "ids",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        224
+      ],
+      "id": "2559d6df-eba2-4faa-91c4-19b37f3174ae",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2fb7939f-44ba-4390-8e13-b29de28f4fba",
+              "name": "data",
+              "value": "={{ $('Get IDs from previous run').item.json.notification_deleted_zd_tasks_previous_set[$json.ids].parseJson() }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        224
+      ],
+      "id": "1e639faa-da55-4fac-a514-e32adb07861c",
+      "name": "Get previously stored object"
+    },
+    {
+      "parameters": {
+        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
+        "toEmail": "={{ $('Globals').item.json.admin_email_address }}",
+        "subject": "Recent verwijderde taken in Zendesk",
+        "html": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n  <h1>De volgende taken zijn recent verwijderd</h1>\n  {{ $json.table }}\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1776,
+        224
+      ],
+      "id": "b950a979-fe7d-4e3a-8bdb-156483d227a7",
+      "name": "Send email",
+      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "convertToHtmlTable",
+        "options": {
+          "cellAttributes": "style=\"max-width: 250px;\""
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        224
+      ],
+      "id": "4f66e152-a6be-4dbd-81d9-cd1c8977d6ac",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d9328157-8aea-4d5c-be50-c04e06465255",
+              "name": "Taak",
+              "value": "={{ $('Get previously stored object').item.json.data.content }}",
+              "type": "string"
+            },
+            {
+              "id": "b024160f-21d0-4c2f-98b8-bfb0d2b8b5f8",
+              "name": "Klant",
+              "value": "=<a href=\"https://qicq.zendesk.com/sales/contacts/{{ $('Get contact info').item.json.contact_id }}\">{{ $('Get contact info').item.json.contact_name }}</a>",
+              "type": "string"
+            },
+            {
+              "id": "63e4286d-21d1-4ac3-afc4-910e1d73590c",
+              "name": "Vervaldatum",
+              "value": "={{ $('Get previously stored object').item.json.data.due_date.toDateTime().toLocal().format('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "4edf753b-e285-4eb5-8c81-effa77f4b196",
+              "name": "Datum verwijderd",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        224
+      ],
+      "id": "24f5d46f-caba-4d9e-a722-2783436f1dad",
+      "name": "Format items"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/contacts/{{ $json.data.resource_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        128
+      ],
+      "id": "597dd502-3ac5-49ec-b9e5-8ba47e72694b",
+      "name": "Zendesk: Get contact by ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0cfed987-5920-488e-8134-caed66542028",
+              "name": "admin_email_address",
+              "value": "tommy@qicq.nl",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3792,
+        432
+      ],
+      "id": "59b2eb5d-9bdd-4c63-bb41-9b01e131c1c2",
+      "name": "Globals"
+    },
+    {
+      "parameters": {
+        "content": "## Set Globals",
+        "height": 240,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3856,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "63104313-eb48-4e11-bfa6-1a509d93c2e7",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "notification_deleted_zd_tasks_previous_set"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        448
+      ],
+      "id": "6ce7384a-c924-44ee-ab15-ed46fbf61f13",
+      "name": "Delete hash of previous IDs",
+      "credentials": {
+        "redis": {
+          "id": "KM9u3JmYZGaWL2Xe",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/tasks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page",
+              "value": "={{ $json.page }}"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            },
+            {
+              "name": "completed",
+              "value": "false"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3360,
+        432
+      ],
+      "id": "0124c47d-47fe-4d61-a83d-9efb46d0d924",
+      "name": "Zendesk: Get tasks",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.data.resource_type }}",
+                    "rightValue": "contact",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e1d3103f-50a2-415e-bb6b-71370d621baf"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "contact"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "08963133-cb83-4f9e-9e70-d155907fa7a7",
+                    "leftValue": "={{ $json.data.resource_type }}",
+                    "rightValue": "deal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "deal"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -688,
+        208
+      ],
+      "id": "ff67a93d-b667-4b1d-b133-bbad257f5497",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/deals/{{ $json.data.resource_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -464,
+        224
+      ],
+      "id": "e68a783f-978c-4168-ae45-07fdbad134c8",
+      "name": "Zendesk: Get deal by ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        32
+      ],
+      "id": "0924a344-f9f2-45d9-932b-49c09ca09ccc",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d619cd4d-6d88-4af3-963d-1da2be6f3204",
+              "name": "contact_id",
+              "value": "={{ $json.body.data.id || \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "6f0ba137-c6af-45a3-97f2-67097fd87548",
+              "name": "contact_name",
+              "value": "={{ $json.body.data.name || \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        224
+      ],
+      "id": "5620d797-2daa-40bf-8345-323553157957",
+      "name": "Get contact info"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5bbdec4f-5090-444e-b7b9-2f7652be49b0",
+              "name": "data.resource_id",
+              "value": "={{ $json.body.data.contact_id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        224
+      ],
+      "id": "59092009-b668-4a3e-a28c-e5d5ee866489",
+      "name": "Get contact ID"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        416
+      ],
+      "id": "de236b38-425f-4b7f-9b8b-486b6f602187",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -16,
+        128
+      ],
+      "id": "5d919b6d-3c04-4cc4-ad86-0e133789343c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        432,
+        224
+      ],
+      "id": "7d721187-d3e6-4154-b95a-8e36c900c2cc",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.getbase.com/v2/tasks/{{ $('Get previously stored object').item.json.data.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        224
+      ],
+      "id": "648eb10d-39df-4745-9304-c16d9961bb1d",
+      "name": "Zendesk: Get task by ID",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5dd68243-dbd2-46c1-9814-b34e1efca270",
+              "leftValue": "={{ $json.body }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        224
+      ],
+      "id": "6698f06e-9bbe-4fdd-80ce-c22b7c145455",
+      "name": "Task does not exist"
+    },
+    {
+      "parameters": {
+        "content": "Check if task is not just completed but really deleted. Need to check for each item here, since connection to previous data get's lost along the way.",
+        "height": 288,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        816,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "ac0f5564-316d-489a-8bd2-9d679bb03cf8",
+      "name": "Sticky Note5"
+    }
+  ],
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "next": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Reduce payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Delete hash of previous IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare objects": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reduce payload": {
+      "main": [
+        [
+          {
+            "node": "New IDs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare objects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Missing from previous set": {
+      "main": [
+        [
+          {
+            "node": "Get previously stored object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get IDs from previous run": {
+      "main": [
+        [
+          {
+            "node": "Previous IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New IDs": {
+      "main": [
+        [
+          {
+            "node": "Get IDs from previous run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Previous IDs": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Missing from previous set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get previously stored object": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format items": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get contact by ID": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "next",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete hash of previous IDs": {
+      "main": [
+        [
+          {
+            "node": "Store all IDs for the next run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get tasks": {
+      "main": [
+        [
+          {
+            "node": "merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zendesk: Get deal by ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get deal by ID": {
+      "main": [
+        [
+          {
+            "node": "Get contact ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get contact info": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get task by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get contact ID": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Zendesk: Get contact by ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Get contact info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zendesk: Get task by ID": {
+      "main": [
+        [
+          {
+            "node": "Task does not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Task does not exist": {
+      "main": [
+        [
+          {
+            "node": "Format items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedPerExecution": 5
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a7350030-1a1d-4ffa-9317-4edf8c275bbb",
+  "triggerCount": 1,
+  "tags": [
+    {
+      "createdAt": "2025-07-18T18:13:03.391Z",
+      "updatedAt": "2025-07-18T18:13:03.391Z",
+      "id": "9Unu8zOsMe5ug14X",
+      "name": "main"
+    }
+  ],
+  "shared": [
+    {
+      "createdAt": "2025-10-24T13:27:26.969Z",
+      "updatedAt": "2025-10-24T13:27:26.969Z",
+      "role": "workflow:owner",
+      "workflowId": "nWfLOkdzy8X7hjMp",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
