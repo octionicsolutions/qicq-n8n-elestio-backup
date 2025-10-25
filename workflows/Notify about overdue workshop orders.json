@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-09T19:04:20.745Z",
-  "updatedAt": "2025-10-09T22:00:54.393Z",
+  "updatedAt": "2025-10-24T13:43:28.929Z",
   "id": "qEbpV1W8rKjZjOIF",
   "name": "Notify about overdue workshop orders",
   "active": true,
@@ -964,7 +964,10 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedPerExecution": 10
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -975,7 +978,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "b53a0dfb-2bdd-4def-a02c-609a50c75c1b",
+  "versionId": "6f01aa1a-4c9a-4554-bc32-d0666d725aa0",
   "triggerCount": 1,
   "tags": [
     {
