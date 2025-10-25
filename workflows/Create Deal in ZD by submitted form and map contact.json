@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-03T21:18:16.417Z",
-  "updatedAt": "2025-10-24T11:32:25.140Z",
+  "updatedAt": "2025-10-24T13:19:20.637Z",
   "id": "J8UbSOdoRSgc0fyE",
   "name": "Create Deal in ZD by submitted form and map contact",
   "active": true,
@@ -805,17 +805,6 @@
       ],
       "id": "82dfc385-08b6-43f0-ac17-cc916ef28365",
       "name": "Map fields4"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -336,
-        704
-      ],
-      "id": "21a74796-2980-481e-9fca-86f61c92bf03",
-      "name": "When clicking ‘Execute workflow’"
     }
   ],
   "connections": {
@@ -1036,17 +1025,6 @@
         [
           {
             "node": "Start",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Map fields3",
             "type": "main",
             "index": 0
           }
@@ -1354,7 +1332,7 @@
       }
     ]
   },
-  "versionId": "6b4ce206-9e65-41c1-af86-923d06f48f88",
+  "versionId": "6e796454-489c-47f5-b890-04d11ec77d28",
   "triggerCount": 4,
   "tags": [
     {
