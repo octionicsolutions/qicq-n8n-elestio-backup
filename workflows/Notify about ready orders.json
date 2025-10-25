@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-29T13:06:32.744Z",
-  "updatedAt": "2025-10-09T13:57:33.286Z",
+  "updatedAt": "2025-10-24T13:43:52.877Z",
   "id": "SNaq9bZVQ31qO1MX",
   "name": "Notify about ready orders",
   "active": false,
@@ -547,14 +547,17 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedPerExecution": 5
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "2bad6aad-c37a-469b-9742-ce83fe6be7b9",
+  "versionId": "8d2e36ef-1ba7-4a1b-8003-b314274c4885",
   "triggerCount": 0,
   "tags": [
     {
