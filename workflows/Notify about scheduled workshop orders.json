@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-24T13:41:32.144Z",
-  "updatedAt": "2025-10-24T13:42:48.384Z",
+  "updatedAt": "2025-10-25T17:01:03.562Z",
   "id": "fAmxjL3cflHa53q4",
   "name": "Notify about scheduled workshop orders",
   "active": true,
@@ -610,9 +610,10 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false,
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 3
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -19829,7 +19830,7 @@
       }
     ]
   },
-  "versionId": "806b1af1-395a-4a3f-8487-171235cb61d2",
+  "versionId": "a58d0f97-33f4-4084-8009-9fea6caa3573",
   "triggerCount": 1,
   "tags": [
     {
