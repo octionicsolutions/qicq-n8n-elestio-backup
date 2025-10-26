@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-24T13:27:26.969Z",
-  "updatedAt": "2025-10-24T13:43:13.804Z",
+  "updatedAt": "2025-10-25T17:00:35.098Z",
   "id": "nWfLOkdzy8X7hjMp",
   "name": "Notify about deleted ZD tasks",
   "active": true,
@@ -1353,9 +1353,10 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false,
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 1
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -1366,7 +1367,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "a7350030-1a1d-4ffa-9317-4edf8c275bbb",
+  "versionId": "146d1335-bb02-44b8-9819-63df971874fb",
   "triggerCount": 1,
   "tags": [
     {
