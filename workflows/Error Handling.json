@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T12:53:37.826Z",
-  "updatedAt": "2025-07-18T13:19:45.894Z",
+  "updatedAt": "2025-10-25T16:59:29.909Z",
   "id": "ucevxHAU6iRAZOr1",
   "name": "Error Handling",
   "active": true,
@@ -91,7 +91,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const data = $json\n\ndata.settings.errorWorkflow = $('get error handler').item.json.id ;\ndelete data.settings.callerPolicy;\n\nreturn {\n  id: data.id,\n  name: data.name,\n  nodes: data.nodes,\n  connections: data.connections,\n  settings: data.settings\n}"
+        "jsCode": "const data = $json\n\ndata.settings.errorWorkflow = $('get error handler').item.json.id ;\ndelete data.settings.callerPolicy;\ndelete data.settings.availableInMCP;\ndelete data.settings.timeSavedPerExecution;\n\nreturn {\n  id: data.id,\n  name: data.name,\n  nodes: data.nodes,\n  connections: data.connections,\n  settings: data.settings\n}"
       },
       "id": "22dda7e0-085c-46e5-a511-0a1953223eba",
       "name": "set fields",
@@ -277,7 +277,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "74fb8f3c-6922-4a45-9416-e81210306334",
+  "versionId": "40e2730c-6f60-426b-aa05-cc67515bbd41",
   "triggerCount": 1,
   "tags": [
     {
