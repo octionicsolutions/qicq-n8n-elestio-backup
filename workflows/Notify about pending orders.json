@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-10-24T13:36:31.174Z",
-  "updatedAt": "2025-10-24T13:39:42.215Z",
+  "updatedAt": "2025-10-25T17:00:06.769Z",
   "id": "vInxOMo9wGJ4wbLR",
   "name": "Notify about pending orders",
   "active": true,
@@ -671,9 +671,10 @@
   },
   "settings": {
     "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false,
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 10
   },
   "staticData": {
     "node:Schedule Trigger": {
@@ -782,7 +783,7 @@
       }
     ]
   },
-  "versionId": "476ba866-1820-4d1d-8a64-26d5e197a4a6",
+  "versionId": "2595ae9e-2a57-464e-9e29-73061a6bc302",
   "triggerCount": 1,
   "tags": [
     {
