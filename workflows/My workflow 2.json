@@ -1,0 +1,92 @@
+{
+  "createdAt": "2025-11-17T12:02:44.724Z",
+  "updatedAt": "2025-11-17T12:02:44.724Z",
+  "id": "bMDkR2mDEQWBQndR",
+  "name": "My workflow 2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7a5db824-4ae9-4b76-a567-0225c144c513",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "execution",
+        "filters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "MOCbD1Vyim0GGKgU",
+            "mode": "id"
+          },
+          "status": "error"
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "43bc9a6d-4304-4608-9253-752a77671685",
+      "name": "Get many executions",
+      "credentials": {
+        "n8nApi": {
+          "id": "IJh5NPVPvITJMgEQ",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many executions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "673aba14-367f-41a3-8dc6-de9a689d289b",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-11-17T12:02:44.724Z",
+      "updatedAt": "2025-11-17T12:02:44.724Z",
+      "role": "workflow:owner",
+      "workflowId": "bMDkR2mDEQWBQndR",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
