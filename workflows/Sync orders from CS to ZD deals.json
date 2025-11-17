@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-09-17T11:48:38.596Z",
-  "updatedAt": "2025-10-24T13:49:33.680Z",
+  "updatedAt": "2025-11-17T12:00:26.796Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
   "active": false,
@@ -753,7 +753,7 @@
       ],
       "id": "48c555cb-fa58-441d-a1f1-1b267dabf9ab",
       "name": "Zendesk: Update deal1",
-      "retryOnFail": false,
+      "retryOnFail": true,
       "waitBetweenTries": 5000,
       "credentials": {
         "httpBearerAuth": {
@@ -2227,7 +2227,7 @@
       }
     ]
   },
-  "versionId": "b350ad3e-597f-47bb-84c6-7e7657d06679",
+  "versionId": "5b2fc218-4fd6-4639-8d7d-3b8f8463981d",
   "triggerCount": 0,
   "tags": [
     {
