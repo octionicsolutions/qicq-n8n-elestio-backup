@@ -1,6 +1,6 @@
 {
   "createdAt": "2025-07-18T18:07:26.170Z",
-  "updatedAt": "2025-09-18T15:57:33.640Z",
+  "updatedAt": "2025-11-17T12:43:54.873Z",
   "id": "XijVrxbRFoQP3UEm",
   "name": "Sync contacts from CS to ZD",
   "active": false,
@@ -32,7 +32,7 @@
       "parameters": {
         "operation": "set",
         "key": "last_update_cs",
-        "value": "={{ $('Globals').item.json.current_datetime }}"
+        "value": "={{ $('Globals').first().json.current_datetime }}"
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
@@ -1336,14 +1336,23 @@
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
     "executionTimeout": 1800,
-    "errorWorkflow": "ucevxHAU6iRAZOr1"
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "6095ecc7-a8c1-47e7-9d21-84531d8d9bd8",
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "workflowRunning": null
+        }
+      }
+    ]
+  },
+  "versionId": "2018bd6e-57a1-40cd-afdd-dc42fbd46d0b",
   "triggerCount": 0,
   "tags": [
     {
