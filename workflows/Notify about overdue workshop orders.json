@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-10-09T19:04:20.745Z",
   "updatedAt": "2025-10-24T13:43:28.929Z",
+  "createdAt": "2025-10-09T19:04:20.745Z",
   "id": "qEbpV1W8rKjZjOIF",
   "name": "Notify about overdue workshop orders",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
@@ -979,25 +980,26 @@
   },
   "pinData": {},
   "versionId": "6f01aa1a-4c9a-4554-bc32-d0666d725aa0",
+  "versionCounter": 2,
   "triggerCount": 1,
   "tags": [
     {
-      "createdAt": "2025-07-18T18:13:03.391Z",
       "updatedAt": "2025-07-18T18:13:03.391Z",
+      "createdAt": "2025-07-18T18:13:03.391Z",
       "id": "9Unu8zOsMe5ug14X",
       "name": "main"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-10-09T19:04:20.745Z",
       "updatedAt": "2025-10-09T19:04:20.745Z",
+      "createdAt": "2025-10-09T19:04:20.745Z",
       "role": "workflow:owner",
       "workflowId": "qEbpV1W8rKjZjOIF",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
