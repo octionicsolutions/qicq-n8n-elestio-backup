@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-07-18T18:10:24.221Z",
   "updatedAt": "2025-09-18T15:54:59.631Z",
+  "createdAt": "2025-07-18T18:10:24.221Z",
   "id": "uzwe6p9dFQOF1IFN",
   "name": "Run 2-way Sync between CS and ZD",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
@@ -363,25 +364,26 @@
   },
   "pinData": {},
   "versionId": "30966f53-6afc-426b-9626-9295f3f37a81",
+  "versionCounter": 2,
   "triggerCount": 1,
   "tags": [
     {
-      "createdAt": "2025-07-18T18:13:03.391Z",
       "updatedAt": "2025-07-18T18:13:03.391Z",
+      "createdAt": "2025-07-18T18:13:03.391Z",
       "id": "9Unu8zOsMe5ug14X",
       "name": "main"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-07-18T18:10:24.221Z",
       "updatedAt": "2025-07-18T18:10:24.221Z",
+      "createdAt": "2025-07-18T18:10:24.221Z",
       "role": "workflow:owner",
       "workflowId": "uzwe6p9dFQOF1IFN",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
