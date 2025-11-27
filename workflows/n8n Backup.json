@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-09-02T18:31:28.310Z",
   "updatedAt": "2025-09-02T19:49:06.160Z",
+  "createdAt": "2025-09-02T18:31:28.310Z",
   "id": "UgSvPTJUacQRtrA4",
   "name": "n8n Backup",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
@@ -672,18 +673,19 @@
   },
   "pinData": {},
   "versionId": "ce3b6b21-78fb-461a-b5bf-56123af3492d",
+  "versionCounter": 2,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-09-02T18:31:28.310Z",
       "updatedAt": "2025-09-02T18:31:28.310Z",
+      "createdAt": "2025-09-02T18:31:28.310Z",
       "role": "workflow:owner",
       "workflowId": "UgSvPTJUacQRtrA4",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
