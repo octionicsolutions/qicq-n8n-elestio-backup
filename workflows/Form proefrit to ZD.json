@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-10-23T11:21:43.196Z",
   "updatedAt": "2025-10-24T11:25:00.956Z",
+  "createdAt": "2025-10-23T11:21:43.196Z",
   "id": "00QPSkbZPSg4KXAM",
   "name": "Form proefrit to ZD",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -615,18 +616,19 @@
     ]
   },
   "versionId": "0068a37d-0a7a-42f2-9f09-9c8b5bca3ab6",
+  "versionCounter": 1,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-10-23T11:21:43.196Z",
       "updatedAt": "2025-10-23T11:21:43.196Z",
+      "createdAt": "2025-10-23T11:21:43.196Z",
       "role": "workflow:owner",
       "workflowId": "00QPSkbZPSg4KXAM",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
