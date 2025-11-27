@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-07-18T18:01:46.588Z",
   "updatedAt": "2025-09-18T15:57:02.332Z",
+  "createdAt": "2025-07-18T18:01:46.588Z",
   "id": "aQi8s6fYP7X0iwlf",
   "name": "Sync contacts from ZD to CS",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -1359,25 +1360,26 @@
   },
   "pinData": {},
   "versionId": "af359658-7ac8-466b-b74a-ad917e574844",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [
     {
-      "createdAt": "2025-07-18T18:06:55.321Z",
       "updatedAt": "2025-07-18T18:06:55.321Z",
+      "createdAt": "2025-07-18T18:06:55.321Z",
       "id": "O8Gvscx6k1IxcC6a",
       "name": "sub"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-07-18T18:01:46.588Z",
       "updatedAt": "2025-07-18T18:01:46.588Z",
+      "createdAt": "2025-07-18T18:01:46.588Z",
       "role": "workflow:owner",
       "workflowId": "aQi8s6fYP7X0iwlf",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
