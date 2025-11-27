@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-09-17T11:48:38.596Z",
   "updatedAt": "2025-11-17T12:00:26.796Z",
+  "createdAt": "2025-09-17T11:48:38.596Z",
   "id": "MOCbD1Vyim0GGKgU",
   "name": "Sync orders from CS to ZD deals",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -2228,25 +2229,26 @@
     ]
   },
   "versionId": "5b2fc218-4fd6-4639-8d7d-3b8f8463981d",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [
     {
-      "createdAt": "2025-07-18T18:06:55.321Z",
       "updatedAt": "2025-07-18T18:06:55.321Z",
+      "createdAt": "2025-07-18T18:06:55.321Z",
       "id": "O8Gvscx6k1IxcC6a",
       "name": "sub"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-09-17T11:48:38.596Z",
       "updatedAt": "2025-09-17T11:48:38.596Z",
+      "createdAt": "2025-09-17T11:48:38.596Z",
       "role": "workflow:owner",
       "workflowId": "MOCbD1Vyim0GGKgU",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
