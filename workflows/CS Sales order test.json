@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-05T11:05:29.833Z",
   "updatedAt": "2025-08-05T19:00:56.828Z",
+  "createdAt": "2025-08-05T11:05:29.833Z",
   "id": "pOCJEX3fgWlt35JU",
   "name": "CS Sales order test",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -12802,18 +12803,19 @@
     ]
   },
   "versionId": "16858c36-4233-43b4-8bd0-6bd7cc2e71e3",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-05T11:05:29.833Z",
       "updatedAt": "2025-08-05T11:05:29.833Z",
+      "createdAt": "2025-08-05T11:05:29.833Z",
       "role": "workflow:owner",
       "workflowId": "pOCJEX3fgWlt35JU",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
