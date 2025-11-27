@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-25T17:55:09.253Z",
   "updatedAt": "2025-09-11T13:28:04.311Z",
+  "createdAt": "2025-08-25T17:55:09.253Z",
   "id": "nkrcSDvRWfbYqBFq",
   "name": "Fiets inruil Form to ZD Deal",
+  "description": null,
   "active": false,
   "isArchived": true,
   "nodes": [],
@@ -15,18 +16,19 @@
   "meta": null,
   "pinData": {},
   "versionId": "fcbb239e-86ec-4489-a3fe-ace71a814808",
+  "versionCounter": 1,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-25T17:55:09.253Z",
       "updatedAt": "2025-08-25T17:55:09.253Z",
+      "createdAt": "2025-08-25T17:55:09.253Z",
       "role": "workflow:owner",
       "workflowId": "nkrcSDvRWfbYqBFq",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
