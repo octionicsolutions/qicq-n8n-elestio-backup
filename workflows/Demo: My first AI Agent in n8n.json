@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-07-18T13:19:32.608Z",
   "updatedAt": "2025-07-18T13:19:34.170Z",
+  "createdAt": "2025-07-18T13:19:32.608Z",
   "id": "XMF4PBIPLGChXYnT",
   "name": "Demo: My first AI Agent in n8n",
+  "description": null,
   "active": false,
   "isArchived": true,
   "nodes": [
@@ -99,18 +100,19 @@
   },
   "pinData": {},
   "versionId": "35fccf99-80a0-4e9e-86eb-c37c1c725740",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-07-18T13:19:32.608Z",
       "updatedAt": "2025-07-18T13:19:32.608Z",
+      "createdAt": "2025-07-18T13:19:32.608Z",
       "role": "workflow:owner",
       "workflowId": "XMF4PBIPLGChXYnT",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
