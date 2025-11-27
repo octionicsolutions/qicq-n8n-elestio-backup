@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-26T15:27:25.956Z",
   "updatedAt": "2025-09-11T13:28:06.096Z",
+  "createdAt": "2025-08-26T15:27:25.956Z",
   "id": "I5hGkhX3y3OB7obD",
   "name": "Proefrit Form to ZD Deal",
+  "description": null,
   "active": false,
   "isArchived": true,
   "nodes": [],
@@ -15,18 +16,19 @@
   "meta": null,
   "pinData": {},
   "versionId": "f18ab057-df2c-4aee-8088-4dba8aeacba2",
+  "versionCounter": 1,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-26T15:27:25.956Z",
       "updatedAt": "2025-08-26T15:27:25.956Z",
+      "createdAt": "2025-08-26T15:27:25.956Z",
       "role": "workflow:owner",
       "workflowId": "I5hGkhX3y3OB7obD",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
