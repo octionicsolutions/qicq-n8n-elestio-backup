@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-05T13:22:45.367Z",
   "updatedAt": "2025-08-05T19:00:55.525Z",
+  "createdAt": "2025-08-05T13:22:45.367Z",
   "id": "PM1NFRh8ojVbRnI5",
   "name": "CS Workshop order test",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -11163,18 +11164,19 @@
     ]
   },
   "versionId": "6033b733-4557-450f-95c0-f493ca8787e5",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-05T13:22:45.367Z",
       "updatedAt": "2025-08-05T13:22:45.367Z",
+      "createdAt": "2025-08-05T13:22:45.367Z",
       "role": "workflow:owner",
       "workflowId": "PM1NFRh8ojVbRnI5",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
