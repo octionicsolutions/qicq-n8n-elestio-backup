@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-12T11:22:09.987Z",
   "updatedAt": "2025-08-12T11:41:11.546Z",
+  "createdAt": "2025-08-12T11:22:09.987Z",
   "id": "S34EUwWyrmJesvZv",
   "name": "CS Error handling Test",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -297,18 +298,19 @@
     ]
   },
   "versionId": "7552cdc6-062a-4298-83f6-46dafab40202",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-12T11:22:09.987Z",
       "updatedAt": "2025-08-12T11:22:09.987Z",
+      "createdAt": "2025-08-12T11:22:09.987Z",
       "role": "workflow:owner",
       "workflowId": "S34EUwWyrmJesvZv",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
