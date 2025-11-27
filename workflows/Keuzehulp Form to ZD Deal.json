@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-08-26T15:26:40.372Z",
   "updatedAt": "2025-09-11T13:28:09.889Z",
+  "createdAt": "2025-08-26T15:26:40.372Z",
   "id": "Pjx74ZM8nOyYSu7G",
   "name": "Keuzehulp Form to ZD Deal",
+  "description": null,
   "active": false,
   "isArchived": true,
   "nodes": [],
@@ -15,18 +16,19 @@
   "meta": null,
   "pinData": {},
   "versionId": "ad83cd5b-da1a-4f6f-8f61-60463f96efde",
+  "versionCounter": 1,
   "triggerCount": 1,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-08-26T15:26:40.372Z",
       "updatedAt": "2025-08-26T15:26:40.372Z",
+      "createdAt": "2025-08-26T15:26:40.372Z",
       "role": "workflow:owner",
       "workflowId": "Pjx74ZM8nOyYSu7G",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
