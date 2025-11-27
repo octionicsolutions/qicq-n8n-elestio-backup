@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-07-18T12:53:37.826Z",
   "updatedAt": "2025-10-25T16:59:29.909Z",
+  "createdAt": "2025-07-18T12:53:37.826Z",
   "id": "ucevxHAU6iRAZOr1",
   "name": "Error Handling",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
@@ -278,25 +279,26 @@
   },
   "pinData": {},
   "versionId": "40e2730c-6f60-426b-aa05-cc67515bbd41",
+  "versionCounter": 2,
   "triggerCount": 1,
   "tags": [
     {
-      "createdAt": "2025-07-18T13:17:06.815Z",
       "updatedAt": "2025-07-18T13:17:06.815Z",
+      "createdAt": "2025-07-18T13:17:06.815Z",
       "id": "AOwufbT2WG91mrLT",
       "name": "system"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-07-18T12:53:37.826Z",
       "updatedAt": "2025-07-18T12:53:37.826Z",
+      "createdAt": "2025-07-18T12:53:37.826Z",
       "role": "workflow:owner",
       "workflowId": "ucevxHAU6iRAZOr1",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
