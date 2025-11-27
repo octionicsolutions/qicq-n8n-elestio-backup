@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-09-29T13:06:32.744Z",
   "updatedAt": "2025-10-25T17:01:12.261Z",
+  "createdAt": "2025-09-29T13:06:32.744Z",
   "id": "SNaq9bZVQ31qO1MX",
   "name": "Notify about ready orders",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -558,25 +559,26 @@
   },
   "pinData": {},
   "versionId": "7009977a-a625-4a5e-b6b3-6e3d8ab8ca1c",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [
     {
-      "createdAt": "2025-07-18T18:06:55.321Z",
       "updatedAt": "2025-07-18T18:06:55.321Z",
+      "createdAt": "2025-07-18T18:06:55.321Z",
       "id": "O8Gvscx6k1IxcC6a",
       "name": "sub"
     }
   ],
   "shared": [
     {
-      "createdAt": "2025-09-29T13:06:32.744Z",
       "updatedAt": "2025-09-29T13:06:32.744Z",
+      "createdAt": "2025-09-29T13:06:32.744Z",
       "role": "workflow:owner",
       "workflowId": "SNaq9bZVQ31qO1MX",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
