@@ -1,8 +1,9 @@
 {
-  "createdAt": "2025-09-29T11:20:55.720Z",
   "updatedAt": "2025-09-29T13:05:19.811Z",
+  "createdAt": "2025-09-29T11:20:55.720Z",
   "id": "9aBo0h3NeWXtmaCJ",
   "name": "Ask admin to map missing employee",
+  "description": null,
   "active": false,
   "isArchived": false,
   "nodes": [
@@ -270,18 +271,19 @@
   },
   "pinData": {},
   "versionId": "fbdc3748-235e-4466-b893-9d49e82ed58c",
+  "versionCounter": 1,
   "triggerCount": 0,
   "tags": [],
   "shared": [
     {
-      "createdAt": "2025-09-29T11:20:55.720Z",
       "updatedAt": "2025-09-29T11:20:55.720Z",
+      "createdAt": "2025-09-29T11:20:55.720Z",
       "role": "workflow:owner",
       "workflowId": "9aBo0h3NeWXtmaCJ",
       "projectId": "rOX3uTf9lsIdiy81",
       "project": {
-        "createdAt": "2025-07-17T20:25:11.997Z",
         "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
         "id": "rOX3uTf9lsIdiy81",
         "name": "Odette Oostindiën <odette@qicq.nl>",
         "type": "personal",
