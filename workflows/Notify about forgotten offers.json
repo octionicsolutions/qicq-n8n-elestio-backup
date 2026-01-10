@@ -1543,7 +1543,8 @@
   },
   "pinData": {},
   "versionId": "2c0ec02c-db21-4317-b9e7-840c14bba1c9",
-  "versionCounter": 4,
+  "activeVersionId": "2c0ec02c-db21-4317-b9e7-840c14bba1c9",
+  "versionCounter": 6,
   "triggerCount": 1,
   "tags": [
     {
