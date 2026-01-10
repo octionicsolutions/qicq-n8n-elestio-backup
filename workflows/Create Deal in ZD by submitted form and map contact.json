@@ -1334,7 +1334,8 @@
     ]
   },
   "versionId": "6e796454-489c-47f5-b890-04d11ec77d28",
-  "versionCounter": 4,
+  "activeVersionId": "6e796454-489c-47f5-b890-04d11ec77d28",
+  "versionCounter": 6,
   "triggerCount": 4,
   "tags": [
     {
