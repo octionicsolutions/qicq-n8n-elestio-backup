@@ -1,0 +1,67 @@
+{
+  "updatedAt": "2026-01-12T09:06:01.445Z",
+  "createdAt": "2026-01-12T09:06:01.445Z",
+  "id": "zGvr8tx9lXmziOvV",
+  "name": "My workflow 3",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
+        "toEmail": "=mario@octionic.com",
+        "subject": "Geplande workshop bestelling",
+        "html": "=<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n\n    <h1>In de volgende workshopvolgorde is de geplande datum gewijzigd</h1>\n    \n    <table border=\"0\">\n      <tr>\n        <th style=\"text-align:left; width:120px;\">Workshopvolgorde</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $('Split Out').item.json.workshop_order_id }}\">{{ $('Split Out').item.json.workshop_order_id }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Klant</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $('Split Out').item.json.customer_id }}/details/\">{{ $('Format items').item.json.customer_name }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Gepland voor</th>\n        <td>{{ $('Split Out').item.json.datetime_scheduled_start.toDateTime().format('dd-MM-yyyy HH:mm') }}</td>\n      </tr>\n    </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "65ab0846-ca52-4f68-a914-c57fa7927879",
+      "name": "Send email",
+      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
+      "credentials": {
+        "smtp": {
+          "id": "KitgAZtXOjpJzXuW",
+          "name": "SMTP Brevo"
+        }
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f183d11c-3e6c-4fbb-acf2-764cf7803f51",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-01-12T09:06:01.445Z",
+      "createdAt": "2026-01-12T09:06:01.445Z",
+      "role": "workflow:owner",
+      "workflowId": "zGvr8tx9lXmziOvV",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
