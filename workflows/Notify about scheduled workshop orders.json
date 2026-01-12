@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-03T14:47:00.609Z",
+  "updatedAt": "2026-01-12T10:21:41.369Z",
   "createdAt": "2025-10-24T13:41:32.144Z",
   "id": "fAmxjL3cflHa53q4",
   "name": "Notify about scheduled workshop orders",
@@ -17525,9 +17525,9 @@
       }
     ]
   },
-  "versionId": "038079b2-6ab5-4d06-9dc0-06cfc6c5a67b",
-  "activeVersionId": "038079b2-6ab5-4d06-9dc0-06cfc6c5a67b",
-  "versionCounter": 6,
+  "versionId": "ccc918c7-f97c-4dc4-99d6-f0f05d671c47",
+  "activeVersionId": "ccc918c7-f97c-4dc4-99d6-f0f05d671c47",
+  "versionCounter": 10,
   "triggerCount": 1,
   "tags": [
     {
