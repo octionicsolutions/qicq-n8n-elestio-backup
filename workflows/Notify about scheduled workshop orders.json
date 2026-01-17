@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-12T10:21:41.369Z",
+  "updatedAt": "2026-01-16T20:42:10.435Z",
   "createdAt": "2025-10-24T13:41:32.144Z",
   "id": "fAmxjL3cflHa53q4",
   "name": "Notify about scheduled workshop orders",
@@ -273,32 +273,6 @@
     },
     {
       "parameters": {
-        "fromEmail": "Cyclesoftware meldingen <system@qicq.nl>",
-        "toEmail": "={{ $('Globals').first().json.recipient_email }}",
-        "subject": "Geplande workshop bestelling",
-        "html": "=<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n\n    <h1>In de volgende workshopvolgorde is de geplande datum gewijzigd</h1>\n    \n    <table border=\"0\">\n      <tr>\n        <th style=\"text-align:left; width:120px;\">Workshopvolgorde</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $('Split Out').item.json.workshop_order_id }}\">{{ $('Split Out').item.json.workshop_order_id }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Klant</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $('Split Out').item.json.customer_id }}/details/\">{{ $('Format items').item.json.customer_name }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Gepland voor</th>\n        <td>{{ $('Split Out').item.json.datetime_scheduled_start.toDateTime().format('dd-MM-yyyy HH:mm') }}</td>\n      </tr>\n    </table>\n\n</body>\n</html>",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
-      "position": [
-        1856,
-        368
-      ],
-      "id": "a30c22f1-3dec-4e36-ac10-7131df2906c2",
-      "name": "Send email",
-      "webhookId": "599b7043-50a7-494d-a76a-5094bac4ee2d",
-      "credentials": {
-        "smtp": {
-          "id": "KitgAZtXOjpJzXuW",
-          "name": "SMTP Brevo"
-        }
-      }
-    },
-    {
-      "parameters": {
         "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $('Split Out').item.json.customer_id }}.json",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
@@ -483,6 +457,32 @@
           "name": "Redis account"
         }
       }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Globals').first().json.recipient_email }}",
+        "subject": "Geplande workshop bestelling",
+        "message": "=<!DOCTYPE html>\n\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n</head>\n<body>\n\n    <h1>In de volgende workshopvolgorde is de geplande datum gewijzigd</h1>\n    \n    <table border=\"0\">\n      <tr>\n        <th style=\"text-align:left; width:120px;\">Workshopvolgorde</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/bestellingen/detail/{{ $('Split Out').item.json.workshop_order_id }}\">{{ $('Split Out').item.json.workshop_order_id }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Klant</th>\n        <td><a href=\"https://s01.cyclesoftware.nl/app/cs/customers/{{ $('Split Out').item.json.customer_id }}/details/\">{{ $('Format items').item.json.customer_name }}</a></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left;\">Gepland voor</th>\n        <td>{{ $('Split Out').item.json.datetime_scheduled_start.toDateTime().format('dd-MM-yyyy HH:mm') }}</td>\n      </tr>\n    </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Cyclesoftware meldingen"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        368
+      ],
+      "id": "5f88080a-9657-460e-bde8-b24490e46b9e",
+      "name": "Send a message",
+      "webhookId": "245913d0-04a0-4c31-9a10-ee7235ccc2be",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HAMBcmI32E85nCRs",
+          "name": "Gmail account"
+        }
+      }
     }
   ],
   "connections": {
@@ -569,17 +569,6 @@
         ]
       ]
     },
-    "Send email": {
-      "main": [
-        [
-          {
-            "node": "Store workshop order id",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Cyclesoftware: Get customer by ID": {
       "main": [
         [
@@ -595,7 +584,7 @@
       "main": [
         [
           {
-            "node": "Send email",
+            "node": "Send a message",
             "type": "main",
             "index": 0
           }
@@ -629,6 +618,17 @@
         [
           {
             "node": "If scheduled date has changed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Store workshop order id",
             "type": "main",
             "index": 0
           }
@@ -17525,9 +17525,9 @@
       }
     ]
   },
-  "versionId": "ccc918c7-f97c-4dc4-99d6-f0f05d671c47",
-  "activeVersionId": "ccc918c7-f97c-4dc4-99d6-f0f05d671c47",
-  "versionCounter": 10,
+  "versionId": "10ce6f94-d68a-4850-8533-baf1f5f4dcf5",
+  "activeVersionId": "10ce6f94-d68a-4850-8533-baf1f5f4dcf5",
+  "versionCounter": 18,
   "triggerCount": 1,
   "tags": [
     {
