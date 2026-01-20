@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T20:42:10.435Z",
+  "updatedAt": "2026-01-19T19:44:13.744Z",
   "createdAt": "2025-10-24T13:41:32.144Z",
   "id": "fAmxjL3cflHa53q4",
   "name": "Notify about scheduled workshop orders",
@@ -40,7 +40,7 @@
             {
               "id": "e0b03e83-01a7-4a4a-8526-d8aac713d664",
               "name": "recipient_email",
-              "value": "info@qicq.com",
+              "value": "info@qicq.nl",
               "type": "string"
             }
           ]
@@ -17525,9 +17525,9 @@
       }
     ]
   },
-  "versionId": "10ce6f94-d68a-4850-8533-baf1f5f4dcf5",
-  "activeVersionId": "10ce6f94-d68a-4850-8533-baf1f5f4dcf5",
-  "versionCounter": 18,
+  "versionId": "8f5d2eaf-7efe-455f-8ab2-6015eac6f4fb",
+  "activeVersionId": "8f5d2eaf-7efe-455f-8ab2-6015eac6f4fb",
+  "versionCounter": 20,
   "triggerCount": 1,
   "tags": [
     {
