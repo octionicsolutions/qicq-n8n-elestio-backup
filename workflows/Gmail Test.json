@@ -1,0 +1,87 @@
+{
+  "updatedAt": "2026-02-12T20:16:48.744Z",
+  "createdAt": "2026-01-16T12:15:34.291Z",
+  "id": "Q2Q2OIPZGg1JlvOH",
+  "name": "Gmail Test",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cdb7681a-b905-4bed-a03d-554eae7649ac",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "80b12f22-035b-4d65-b9b6-b77551ecefbf",
+      "name": "Get many messages",
+      "webhookId": "ba3388c4-47c8-4753-9fda-54d2c6de1442",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HAMBcmI32E85nCRs",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "e00231a3-7ef3-4bb1-ad8e-0bec3b667f70",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-01-16T12:15:34.291Z",
+      "createdAt": "2026-01-16T12:15:34.291Z",
+      "role": "workflow:owner",
+      "workflowId": "Q2Q2OIPZGg1JlvOH",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
