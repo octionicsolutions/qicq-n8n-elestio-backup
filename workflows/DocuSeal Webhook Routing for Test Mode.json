@@ -1,0 +1,257 @@
+{
+  "updatedAt": "2026-02-12T23:00:06.379Z",
+  "createdAt": "2026-02-12T19:08:21.455Z",
+  "id": "uNXYPGmLMxqHQnOM",
+  "name": "DocuSeal Webhook Routing for Test Mode",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a64f40f2-f30e-4999-9c6b-935153dd783c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "db0abf1d-c881-4834-93e8-11f2586a668f",
+      "name": "Webhook",
+      "webhookId": "a64f40f2-f30e-4999-9c6b-935153dd783c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xu8u-n2o3-slb2.f2.xano.io/api:bike-rental/webhooks/docuseal",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Branch",
+              "value": "dev"
+            },
+            {
+              "name": "X-Data-Source",
+              "value": "test"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b7e2cb9f-8fe1-4efd-837d-59d69a11a4d7",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## Purpose\nThis workflow forwards the webhook (Test Mode only) from DocuSeal to Xano and sets the proper headers to address the testing environment accordingly.",
+        "height": 128,
+        "width": 400
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "252a1668-b157-444e-92b4-5c94d07a56f4",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-u47189.vm.elestio.app",
+            "x-real-ip": "52.30.226.117",
+            "x-forwarded-for": "52.30.226.117",
+            "x-forwarded-proto": "https",
+            "x-forwarded-port": "443",
+            "connection": "close",
+            "content-length": "2712",
+            "user-agent": "DocuSeal.com Webhook",
+            "content-type": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "accept": "*/*"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_type": "form.completed",
+            "timestamp": "2026-02-12T18:58:50.294Z",
+            "data": {
+              "id": 837372,
+              "submission_id": 649367,
+              "email": "octionictest@gmail.com",
+              "phone": null,
+              "name": "Mario Test",
+              "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+              "ip": "87.122.121.8",
+              "sent_at": "2026-02-12T18:57:31.328Z",
+              "opened_at": "2026-02-12T18:58:01.674Z",
+              "completed_at": "2026-02-12T18:58:49.095Z",
+              "declined_at": null,
+              "created_at": "2026-02-12T18:57:31.332Z",
+              "updated_at": "2026-02-12T18:58:49.097Z",
+              "external_id": "booking_27",
+              "metadata": {},
+              "status": "completed",
+              "application_key": "booking_27",
+              "decline_reason": null,
+              "role": "First Submitter",
+              "preferences": {
+                "send_email": true,
+                "send_sms": false
+              },
+              "values": [
+                {
+                  "field": "brand",
+                  "value": "VanMoof"
+                },
+                {
+                  "field": "type",
+                  "value": "E-bike"
+                },
+                {
+                  "field": "start",
+                  "value": "12-02-2026"
+                },
+                {
+                  "field": "end",
+                  "value": "13-02-2026"
+                },
+                {
+                  "field": "full_name",
+                  "value": "Mario Test"
+                },
+                {
+                  "field": "address",
+                  "value": "Teststreet 15, 47889 Testcity"
+                },
+                {
+                  "field": "license_plate",
+                  "value": null
+                },
+                {
+                  "field": "battery_type",
+                  "value": null
+                },
+                {
+                  "field": "battery_number",
+                  "value": null
+                },
+                {
+                  "field": "key_number",
+                  "value": null
+                },
+                {
+                  "field": "full_name",
+                  "value": "Mario Test"
+                },
+                {
+                  "field": "assessories",
+                  "value": null
+                },
+                {
+                  "field": "Date Field 1",
+                  "value": "2026-02-12"
+                },
+                {
+                  "field": "Signature Field 1",
+                  "value": "https://docuseal.eu/file/WyJmNzAxM2JhMS1lMzJmLTRlYWYtOGNmZi0zYWE1ZWQzYTg4MWIiLCJibG9iIiwxNzcwOTI1ODg3XQ--95efa62719f50497f1b13b6ec0f7f783d9d9bd4827bc9bc9de6a12d099930642/signature.png"
+                }
+              ],
+              "documents": [
+                {
+                  "name": "Uitleen overeenkomst 45 km- private",
+                  "url": "https://docuseal.eu/file/WyI0YmEyZDQ2MS0xZGE3LTQzNzItOGZjNC03YTgyZmE3Mjc3YzUiLCJibG9iIiwxNzcwOTI1ODg3XQ--a96897173908ca0a10720f2994a02e481ce2d1d247ad3f2a75083baca43d989e/Uitleen%20overeenkomst%2045%20km-%20private.pdf"
+                }
+              ],
+              "audit_log_url": "https://docuseal.eu/file/WyI0MmQxY2IwMC0zYjM3LTRiZTQtYjAxNy1lZjBiMjg0YzZlOGYiLCJibG9iIiwxNzcwOTI1ODg3XQ--5c0430b838764be6da4918eb5ad149f056002127536bf59600229f60fefbfb06/Auditlogboek%20-%20Uitleencontract%20QicQ%20Speed%20pedelec.pdf",
+              "submission_url": "https://docuseal.eu/e/4smX3HnrEmYJrm",
+              "template": {
+                "id": 395694,
+                "name": "Uitleencontract QicQ Speed pedelec",
+                "external_id": null,
+                "created_at": "2026-02-05T14:04:13.195Z",
+                "updated_at": "2026-02-12T18:42:16.255Z",
+                "folder_name": "Default"
+              },
+              "submission": {
+                "id": 649367,
+                "audit_log_url": "https://docuseal.eu/file/WyI0MmQxY2IwMC0zYjM3LTRiZTQtYjAxNy1lZjBiMjg0YzZlOGYiLCJibG9iIiwxNzcwOTI1ODg3XQ--5c0430b838764be6da4918eb5ad149f056002127536bf59600229f60fefbfb06/Auditlogboek%20-%20Uitleencontract%20QicQ%20Speed%20pedelec.pdf",
+                "combined_document_url": null,
+                "status": "completed",
+                "url": "https://docuseal.eu/e/4smX3HnrEmYJrm",
+                "variables": {},
+                "created_at": "2026-02-12T18:57:31.329Z"
+              }
+            }
+          },
+          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/a64f40f2-f30e-4999-9c6b-935153dd783c",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "07cb5d8b-58e0-4286-82b5-8eac9afed012",
+  "activeVersionId": "07cb5d8b-58e0-4286-82b5-8eac9afed012",
+  "versionCounter": 13,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-12T19:08:21.455Z",
+      "createdAt": "2026-02-12T19:08:21.455Z",
+      "role": "workflow:owner",
+      "workflowId": "uNXYPGmLMxqHQnOM",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
