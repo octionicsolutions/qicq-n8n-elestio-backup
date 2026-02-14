@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-13T03:15:53.422Z",
+  "updatedAt": "2026-02-13T23:00:06.305Z",
   "createdAt": "2026-02-13T00:44:31.702Z",
   "id": "hkYB1YGVHYx56LgJ",
   "name": "My workflow 6",
@@ -192,7 +192,10 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "staticData": null,
   "meta": {
@@ -238,9 +241,9 @@
       }
     ]
   },
-  "versionId": "5b0ce4f7-a846-4db0-952d-27676bc716f0",
-  "activeVersionId": "5b0ce4f7-a846-4db0-952d-27676bc716f0",
-  "versionCounter": 8,
+  "versionId": "c765b81b-c6f9-4bca-8fc3-64fb74cd5b14",
+  "activeVersionId": "c765b81b-c6f9-4bca-8fc3-64fb74cd5b14",
+  "versionCounter": 10,
   "triggerCount": 1,
   "tags": [],
   "shared": [
