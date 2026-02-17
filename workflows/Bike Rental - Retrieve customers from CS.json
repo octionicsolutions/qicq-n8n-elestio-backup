@@ -1,0 +1,267 @@
+{
+  "updatedAt": "2026-02-17T12:20:53.676Z",
+  "createdAt": "2026-02-13T00:44:31.702Z",
+  "id": "hkYB1YGVHYx56LgJ",
+  "name": "Bike Rental - Retrieve customers from CS",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.cyclesoftware.nl/api/v1/customers/{{ $json.query.id }}.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept-encoding",
+              "value": "gzip"
+            },
+            {
+              "name": "Content-type",
+              "value": "application/json; charset=utf-8"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "52008c9e-1d57-430d-850b-5dba21a710a9",
+      "name": "Cyclesoftware: Get recently updated customers",
+      "retryOnFail": false,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "q6AhamIl37oB4xIX",
+          "name": "Cyclesoftware (PROD)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "path": "1fb081d1-c64a-4dfe-bdd1-2220a5c59c3f",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "81820bf3-d315-4f28-b8bd-a7f0f3dd3239",
+      "name": "Webhook",
+      "webhookId": "1fb081d1-c64a-4dfe-bdd1-2220a5c59c3f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9uDYIpOOy3EcXbJT",
+          "name": "CS/Xano Webhook Secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "195c4716-fad5-4899-8195-2fc411f4e397",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd2a1541-0b6c-44a8-95ec-cc86a74db69b",
+              "name": "customer_id",
+              "value": "={{ $json.customer_id }}",
+              "type": "number"
+            },
+            {
+              "id": "12ec122b-d818-4d2f-b8ac-ea8fb62faecd",
+              "name": "postcode",
+              "value": "={{ $json.postcode }}",
+              "type": "string"
+            },
+            {
+              "id": "17908e58-bfc5-480e-b666-db8ce8ef5077",
+              "name": "house_number",
+              "value": "={{ $json.house_number }}",
+              "type": "string"
+            },
+            {
+              "id": "d679dbbc-3af8-4e1d-ad03-e05f5176cb2e",
+              "name": "first_name",
+              "value": "={{ $json.first_name }}{{ $json.insertion.length > 0 ? $json.insertion.length + ' ' : '' }}",
+              "type": "string"
+            },
+            {
+              "id": "02715215-c848-4cc8-b6a0-9bb2dd8dfcb3",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "25f70bb2-ceb7-43b5-861b-989abd753561",
+              "name": "street",
+              "value": "={{ $json.street }}",
+              "type": "string"
+            },
+            {
+              "id": "c3d8f15a-8171-40a2-b6e8-880f67161978",
+              "name": "city",
+              "value": "={{ $json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "9ed61463-9384-4015-b6de-3abb6837aef5",
+              "name": "country_code_iso_3166",
+              "value": "={{ $json.country_code_iso_3166 }}",
+              "type": "string"
+            },
+            {
+              "id": "7973f895-b454-4522-b979-774f59405a32",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6048b391-e7e8-4a76-aebd-50f2bc9dd2ef",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Cyclesoftware: Get recently updated customers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cyclesoftware: Get recently updated customers": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "ucevxHAU6iRAZOr1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-u47189.vm.elestio.app",
+            "x-real-ip": "87.122.121.8",
+            "x-forwarded-for": "87.122.121.8",
+            "x-forwarded-proto": "https",
+            "x-forwarded-port": "443",
+            "connection": "close",
+            "sec-ch-ua": "\"Not(A:Brand\";v=\"8\", \"Chromium\";v=\"144\", \"Google Chrome\";v=\"144\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "upgrade-insecure-requests": "1",
+            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36",
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "sec-fetch-site": "none",
+            "sec-fetch-mode": "navigate",
+            "sec-fetch-user": "?1",
+            "sec-fetch-dest": "document",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,de;q=0.7",
+            "priority": "u=0, i",
+            "cookie": "ph_phc_Jzsm6DTm6V2705zeU5dcNvQDlonOR68XvX2sh1sEOHO_posthog=%7B%22distinct_id%22%3A%22019570d0-75b3-7a92-b9fa-395ca84e98b6%22%2C%22%24sesid%22%3A%5B1741392089396%2C%220195730e-9134-790c-82ba-6d3ab0083e50%22%2C1741392089396%5D%7D; rl_page_init_referrer=RudderEncrypt%3AU2FsdGVkX180cmnizl%2Blzcpf83ELR%2FIZh%2BD41zVaGy8%3D; rl_page_init_referring_domain=RudderEncrypt%3AU2FsdGVkX1%2BqdezEqzTx8crj8%2FL9mNrjDmjtwHrpppg%3D; rl_anonymous_id=RudderEncrypt%3AU2FsdGVkX18vN2kUb5bFKHKWhMb5h20HvLwAM3SuKWEcs2GS7JhHPOGkMPpoLPChZoDbMpk8ZzbqOx8zjWeEiQ%3D%3D; rl_user_id=RudderEncrypt%3AU2FsdGVkX19eG%2FlFwlSKsIlvm%2FDgG4ZK%2FR%2BW29zOBDwF%2FOidhm1vj7PeDwS2tzE7kLcK2E%2BbElMBj0L5qV8p7WBwT%2B1TtmoiT9Y6SJ%2FaLzR4%2FqSFueH3wD6xuZGK3l3kQYDtvN5EVYkPDV3pZKojKfSDqQafBe552gPt05EXCsE%3D; rl_trait=RudderEncrypt%3AU2FsdGVkX1%2B%2FFyJdLR8UaMmZEvY%2BoHsqFafIKdvnY3embGm4ZvYYkYy9JKOKZrkFvBKKPgRCmVe4rKMv6S1S2rbQj5%2FocjCBNYX8H%2BfT2K7xmnpVckwFIq8BCes5SdF2SSgj%2BHo4bSsPQYeOQ0fqRW%2FJDeAvB9XnbpMfE5rDe00%3D; rl_session=RudderEncrypt%3AU2FsdGVkX184pA4fmSagtqTWwtBD%2B1gWBmCvXAfKIZgY%2BcGaPXnLud0KcmpRIZH6QdVsCf5zbdq%2BaKR%2B1MDJDCkYThHD3duxUlH01kux8J%2FxQhGS%2BZcH%2Fr%2BalKI%2F02zIhXl0ug%2FQveuq48qRBVhgnQ%3D%3D; ph_phc_4URIAm1uYfJO7j8kWSe0J8lc8IqnstRLS7Jx8NcakHo_posthog=%7B%22%24device_id%22%3A%22a495e8b9437caaa426db5f65668a3c00112773128ea6a9fefb15208e0c7c7bb2%237ca8a8c3-f4c7-4d44-91bc-74d86578d1ef%22%2C%22distinct_id%22%3A%22f6d6fe437485a7b7ef09ad008d80508171a856ed04cdbdfba794d32892a45667%237406c7a3-2399-4677-8bc7-866ab5e807b3%22%2C%22%24sesid%22%3A%5B1770943527226%2C%22019c5471-594d-760c-a924-a1abf6be0fde%22%2C1770943240525%5D%2C%22%24epp%22%3Atrue%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22https%3A%2F%2Fdash.elest.io%2F%22%2C%22u%22%3A%22https%3A%2F%2Fn8n-u47189.vm.elestio.app%2Fsignout%22%7D%7D"
+          },
+          "params": {},
+          "query": {
+            "id": "1096"
+          },
+          "body": {},
+          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/1fb081d1-c64a-4dfe-bdd1-2220a5c59c3f",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "c766e6ea-97fe-411e-9c2a-160d2fa74c1d",
+  "activeVersionId": "c766e6ea-97fe-411e-9c2a-160d2fa74c1d",
+  "versionCounter": 17,
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-13T00:44:31.702Z",
+      "createdAt": "2026-02-13T00:44:31.702Z",
+      "role": "workflow:owner",
+      "workflowId": "hkYB1YGVHYx56LgJ",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
