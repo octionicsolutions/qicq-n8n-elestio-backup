@@ -1,0 +1,123 @@
+{
+  "updatedAt": "2026-02-18T18:51:04.149Z",
+  "createdAt": "2026-02-18T16:43:02.876Z",
+  "id": "A4gOThlj65WxepEG",
+  "name": "Get deal with GCLID",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://api.getbase.com/v2/deals/195251365",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "YourAppName/1.0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "16a7271a-ebc9-4fcc-8bea-f4f9360f8eb5",
+      "name": "Zendesk: Get deal",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "LsYF5cN5nkb0vjbk",
+          "name": "Zendesk Sell (PROD)"
+        }
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Zendesk: Get deal": [
+      {
+        "json": {
+          "data": {
+            "id": 195251365,
+            "created_at": "2026-02-18T16:35:33Z",
+            "updated_at": "2026-02-18T18:50:03Z",
+            "name": "Fiets inruil - Emke Osinga",
+            "hot": false,
+            "currency": "EUR",
+            "loss_reason_id": null,
+            "source_id": 13096459,
+            "creator_id": 2789884,
+            "unqualified_reason_id": null,
+            "last_stage_change_at": "2026-02-18T16:35:33Z",
+            "last_stage_change_by_id": null,
+            "added_at": "2026-02-18T16:35:33Z",
+            "dropbox_email": "dropbox@f4949d9c.deals.futuresimple.com",
+            "owner_id": 2789884,
+            "value": 0,
+            "stage_id": 119627,
+            "contact_id": 308265927,
+            "custom_fields": {
+              "GCLID": "0",
+              "Details": "Merk & model: Stromer ST3\nType: \nBouwjaar: 2021\nPrijs: 7500\nKm-stand: 21000\nIn orde?: \nDefect: \nFactuur?: Ja"
+            },
+            "organization_id": 310005215,
+            "estimated_close_date": null,
+            "customized_win_likelihood": null,
+            "last_activity_at": null,
+            "tags": [
+              "Inruil"
+            ]
+          },
+          "meta": {
+            "version": 3,
+            "type": "deal"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "1d450dfc-e39a-45bd-9b37-8a685c588f5b",
+  "activeVersionId": null,
+  "versionCounter": 3,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-18T16:43:02.876Z",
+      "createdAt": "2026-02-18T16:43:02.876Z",
+      "role": "workflow:owner",
+      "workflowId": "A4gOThlj65WxepEG",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
