@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-17T12:25:51.418Z",
+  "updatedAt": "2026-02-19T21:08:24.399Z",
   "createdAt": "2025-09-03T21:18:16.417Z",
   "id": "J8UbSOdoRSgc0fyE",
   "name": "Create Deal in ZD by submitted form and map contact",
@@ -154,7 +154,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "={\n  \"data\": {\n    \"name\": \"{{ $('Start').item.json.form }} - {{ $ifEmpty($('Start').item.json.first_name, \"[UNKNOWN]\") }} {{ $ifEmpty($('Start').item.json.last_name, \"[UNKNOWN]\") }}\",\n    \"contact_id\": {{ $json.data ? $json.data.id : $json.body.items[0].data.id }},\n    \"currency\": \"EUR\",\n    \"stage_id\": {{ $('Globals').item.json.stage_id }},\n    \"source_id\": {{ $('Start').item.json.source_id }},\n    \"tags\": [\"Inruil\"],\n    \"custom_fields\": {\n      \"Details\": {{ $('Start').item.json.Details.toJsonString() }}\n    }\n  }\n}",
+        "jsonOutput": "={\n  \"data\": {\n    \"name\": \"{{ $('Start').item.json.form }} - {{ $ifEmpty($('Start').item.json.first_name, \"[UNKNOWN]\") }} {{ $ifEmpty($('Start').item.json.last_name, \"[UNKNOWN]\") }}\",\n    \"contact_id\": {{ $json.data ? $json.data.id : $json.body.items[0].data.id }},\n    \"currency\": \"EUR\",\n    \"stage_id\": {{ $('Globals').item.json.stage_id }},\n    \"source_id\": {{ $('Start').item.json.source_id }},\n    \"tags\": [\"Inruil\"],\n    \"custom_fields\": {\n      \"Details\": {{ $('Start').item.json.Details.toJsonString() }},\n      \"GCLID\": \"{{ $('Start').item.json.gclid }}\"\n    }\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
@@ -428,6 +428,12 @@
               "name": "source_id",
               "value": 13096459,
               "type": "number"
+            },
+            {
+              "id": "56526023-cabb-48e3-94a9-2cc08813ae97",
+              "name": "gclid",
+              "value": "",
+              "type": "string"
             }
           ]
         },
@@ -524,6 +530,12 @@
               "name": "source_id",
               "value": 11691077,
               "type": "number"
+            },
+            {
+              "id": "04dbfa21-9bff-4bb9-8341-d8257e7c1aa1",
+              "name": "gclid",
+              "value": "={{ $json.body.cookie_data[0].gclid || \"\" }}",
+              "type": "string"
             }
           ]
         },
@@ -598,6 +610,12 @@
               "name": "source_id",
               "value": 11691078,
               "type": "number"
+            },
+            {
+              "id": "63608601-fa43-43b2-93d2-4da4081d7401",
+              "name": "gclid",
+              "value": "",
+              "type": "string"
             }
           ]
         },
@@ -734,6 +752,12 @@
               "name": "source_id",
               "value": 11705431,
               "type": "number"
+            },
+            {
+              "id": "9308b3ad-9919-4e0a-b23e-ae319553c39f",
+              "name": "gclid",
+              "value": "",
+              "type": "string"
             }
           ]
         },
@@ -793,6 +817,12 @@
               "name": "source_id",
               "value": 11705431,
               "type": "number"
+            },
+            {
+              "id": "90eafc69-415d-4431-b37f-db316d657ae5",
+              "name": "gclid",
+              "value": "",
+              "type": "string"
             }
           ]
         },
@@ -1293,51 +1323,6 @@
         }
       }
     ],
-    "Form: Keuzehulp": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n-u47189.vm.elestio.app",
-            "x-real-ip": "45.152.249.3",
-            "x-forwarded-for": "45.152.249.3",
-            "x-forwarded-proto": "https",
-            "x-forwarded-port": "443",
-            "connection": "close",
-            "content-length": "242",
-            "accept": "*/*",
-            "content-type": "application/json"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "voornaam": "Hans",
-            "achternaam": "Eijgenram",
-            "email": "hans_eijgenraam@planet.nl",
-            "telefoon": "",
-            "typefiets": "elektrische-fiets",
-            "typemotor": "middenmotor",
-            "typeaccu": "500-wh-2",
-            "typeaandrijving": "riem",
-            "typezithouding": "comfortabele-zithouding"
-          },
-          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5",
-          "executionMode": "production"
-        }
-      }
-    ],
-    "Map fields1": [
-      {
-        "json": {
-          "form": "Keuzehulp",
-          "first_name": "Hans",
-          "last_name": "Eijgenram",
-          "email": "hans_eijgenraam@planet.nl",
-          "mobile": "",
-          "Details": "Type Fiets: elektrische-fiets\\nType Motor: middenmotor\\nType Accu: 500-wh-2\\nAandrijving: riem\\nZithouding: comfortabele-zithouding",
-          "source_id": 14495000
-        }
-      }
-    ],
     "Map fields": [
       {
         "json": {
@@ -1486,11 +1471,55 @@
           "source_id": 11705431
         }
       }
+    ],
+    "Form: Keuzehulp": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-u47189.vm.elestio.app",
+            "x-real-ip": "45.152.249.3",
+            "x-forwarded-for": "45.152.249.3",
+            "x-forwarded-proto": "https",
+            "x-forwarded-port": "443",
+            "connection": "close",
+            "content-length": "449",
+            "accept": "*/*",
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "cookie_data": [
+              {
+                "gclid": "CjwKCAiAwNDMBhBfEiwAd7ti1NFQxF1G_Nohpmm_njayU2dSuS2lc6f9Hm2cHa3aag7G19DWMkDNyxoCDMYQAvD_BwE",
+                "ad_storage": "false",
+                "analytics_storage": "false",
+                "necessary": "false",
+                "preferences": "false"
+              }
+            ],
+            "voornaam": "Niels",
+            "achternaam": "Visser",
+            "email": "Nielsvisser28@hotmail.com",
+            "telefoon": "",
+            "typefiets": "speed-pedelec",
+            "typemotor": "middenmotor",
+            "typeaccu": "500-800-wh",
+            "typeaandrijving": "riem",
+            "typezithouding": "comfortabele-zithouding"
+          },
+          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/30ce98ae-aae3-4ad1-a2ee-48b33c6d09c5",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
-  "versionId": "334be816-ca7a-42da-b946-a1c89c90994a",
-  "activeVersionId": "334be816-ca7a-42da-b946-a1c89c90994a",
-  "versionCounter": 11,
+  "versionId": "ab2a32ba-5b5e-4172-aaa4-acb46fc82117",
+  "activeVersionId": "ab2a32ba-5b5e-4172-aaa4-acb46fc82117",
+  "versionCounter": 15,
   "triggerCount": 4,
   "tags": [
     {
