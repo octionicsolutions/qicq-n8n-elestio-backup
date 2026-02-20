@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-10-11T20:08:14.621Z",
+  "updatedAt": "2026-02-19T21:33:00.197Z",
   "createdAt": "2025-09-17T11:46:23.102Z",
   "id": "J5w7xv52mTvHunct",
   "name": "Sync deals from ZD to CS orders",
@@ -219,6 +219,12 @@
               "name": "stage_id_lost",
               "value": 37480415,
               "type": "number"
+            },
+            {
+              "id": "8d9ff11f-7e74-4b9e-87c1-3fffcc6db7bd",
+              "name": "stage_id_won",
+              "value": 119628,
+              "type": "number"
             }
           ]
         },
@@ -273,8 +279,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        2656,
-        256
+        2672,
+        160
       ],
       "id": "45d863fb-3c09-4c78-a829-731e222694cb",
       "name": "Only keep lost deals"
@@ -290,8 +296,8 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        2432,
-        64
+        2448,
+        -32
       ],
       "id": "0475d541-3ed6-4c7b-a630-aa1d42e085de",
       "name": "Get ZD ID's to skip",
@@ -311,8 +317,8 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        2656,
-        64
+        2672,
+        -32
       ],
       "id": "bb976721-c5cd-4522-a4e8-addcf9513de4",
       "name": "Clear ZD items to skip",
@@ -352,8 +358,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        2432,
-        256
+        2448,
+        160
       ],
       "id": "930ac402-a44a-45e6-9b46-7244fc189636",
       "name": "Skip previously updated items"
@@ -379,8 +385,8 @@
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        3328,
-        256
+        3344,
+        160
       ],
       "id": "888e2d21-473d-454f-9ab9-fd25592f1a42",
       "name": "Store CS ID's to skip them during ZD update",
@@ -418,8 +424,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3104,
-        496
+        3120,
+        400
       ],
       "id": "cdb409c9-615c-4eea-9c05-e252ff0885d3",
       "name": "Cyclesoftware: Get common values",
@@ -469,8 +475,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3104,
-        256
+        3120,
+        160
       ],
       "id": "7c540b5f-48bc-42f1-9379-97b49c8cc78e",
       "name": "Cyclesoftware: Cancel order (\"unknown\")",
@@ -544,8 +550,8 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        2880,
-        256
+        2896,
+        160
       ],
       "id": "c1cc7df9-2d97-4dd4-af16-4e04f05187ef",
       "name": "Only continue if CS ID is set in ZD already"
@@ -558,8 +564,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3040,
-        64
+        3056,
+        -32
       ],
       "typeVersion": 1,
       "id": "fa6844b1-1220-4945-8745-05618cd8e4cc",
@@ -630,6 +636,68 @@
           "name": "Zendesk Sell (PROD)"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aadb55be-c2ed-4b5b-a3cd-91ad20ecf484",
+              "leftValue": "={{ $json.data.stage_id }}",
+              "rightValue": "={{ $('Globals').item.json.stage_id_won }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2448,
+        352
+      ],
+      "id": "95f5f8de-4bb6-471b-a757-4a9b028e4551",
+      "name": "Only keep won deals"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "CRv80VioCG9Z7xmu",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/CRv80VioCG9Z7xmu",
+          "cachedResultName": "Send GCLID for won leads"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2672,
+        352
+      ],
+      "id": "c1520e45-fda9-47cd-97fe-60bfc1d1c668",
+      "name": "Call 'Send GCLID for won leads'"
     }
   ],
   "connections": {
@@ -778,6 +846,11 @@
             "node": "Skip previously updated items",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Only keep won deals",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -836,6 +909,17 @@
           }
         ]
       ]
+    },
+    "Only keep won deals": {
+      "main": [
+        [
+          {
+            "node": "Call 'Send GCLID for won leads'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -848,10 +932,62 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "94fedd7a-68de-4d47-aa52-f432871a27e8",
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "ZD Deal Ref": [
+      {
+        "json": {
+          "data": {
+            "id": 195274875,
+            "created_at": "2026-02-19T12:43:35Z",
+            "updated_at": "2026-02-19T12:43:35Z",
+            "name": "Proefrit - Usman Asim",
+            "hot": false,
+            "currency": "EUR",
+            "loss_reason_id": null,
+            "source_id": 11705431,
+            "creator_id": 2789884,
+            "unqualified_reason_id": null,
+            "last_stage_change_at": "2026-02-19T12:43:35Z",
+            "last_stage_change_by_id": null,
+            "added_at": "2026-02-19T12:43:35Z",
+            "dropbox_email": "dropbox@fb948499.deals.futuresimple.com",
+            "owner_id": 2789884,
+            "value": 0,
+            "stage_id": 119627,
+            "contact_id": 570075610,
+            "custom_fields": {
+              "Details": "Dienst: Stromer ST3 Pinion\nOpmerkingen: Ik zou graag een proefrit maken op de Stromer ST3 Pinion met een comfortstuur. Is het mogelijk om hiervoor een afspraak te maken?"
+            },
+            "organization_id": null,
+            "estimated_close_date": null,
+            "customized_win_likelihood": null,
+            "last_activity_at": null,
+            "tags": [
+              "Inruil"
+            ]
+          },
+          "meta": {
+            "version": 2,
+            "type": "deal"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "a7bd451f-c876-46ba-b089-e7694bfdfd3d",
   "activeVersionId": null,
-  "versionCounter": 1,
+  "versionCounter": 6,
   "triggerCount": 0,
   "tags": [
     {
