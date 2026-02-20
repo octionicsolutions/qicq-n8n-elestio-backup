@@ -1,0 +1,283 @@
+{
+  "updatedAt": "2026-02-19T21:53:07.350Z",
+  "createdAt": "2026-02-19T21:11:22.918Z",
+  "id": "CRv80VioCG9Z7xmu",
+  "name": "Send GCLID for won leads",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c0674b7f-219b-42e3-ac1f-c374f4ae6af4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0733a0ca-31a1-4b08-9d18-e4e80ef533a7",
+              "leftValue": "={{ $json.data.custom_fields.GCLID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2789c70e-c7df-4822-808f-5362beb03e33",
+              "leftValue": "={{ $json.data.custom_fields.GCLID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "24223e88-dab0-4259-8380-a5253408f0a0",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "304a7049-3ec9-4dcb-94ac-b4283f71295c",
+              "name": "deal_origin",
+              "value": "={{ $json.data.source_id == 13096459 ? 'inruil' : ($json.data.source_id == 11691078 ? 'lease' : ($json.data.source_id == 11691077 ? 'keuzehulp' : '')) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "935496e9-8c0e-413b-aa5b-fc8c63681f19",
+      "name": "Determine deal_origin"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "38240274-1122-4660-984b-70bea119ee27",
+              "leftValue": "={{ $json.deal_origin }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "cb47b6f3-f84d-4159-9a11-f840171c5154",
+      "name": "Only keep deals with selected source"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sst.qicq.nl/webhook",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_name",
+              "value": "deal_won"
+            },
+            {
+              "name": "value",
+              "value": "={{ $json.data.value }}"
+            },
+            {
+              "name": "transaction_id",
+              "value": "={{ $json.data.id }}"
+            },
+            {
+              "name": "currency",
+              "value": "={{ $json.data.currency }}"
+            },
+            {
+              "name": "deal_origin",
+              "value": "={{ $json.deal_origin }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        896,
+        0
+      ],
+      "id": "89ce2192-76c7-4377-b87e-1ff3a7b3e083",
+      "name": "Send data to GTM platform"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Determine deal_origin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Determine deal_origin": {
+      "main": [
+        [
+          {
+            "node": "Only keep deals with selected source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only keep deals with selected source": {
+      "main": [
+        [
+          {
+            "node": "Send data to GTM platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "data": {
+            "id": 195274875,
+            "created_at": "2026-02-19T12:43:35Z",
+            "updated_at": "2026-02-19T12:43:35Z",
+            "name": "Proefrit - Usman Asim",
+            "hot": false,
+            "currency": "EUR",
+            "loss_reason_id": null,
+            "source_id": 11705431,
+            "creator_id": 2789884,
+            "unqualified_reason_id": null,
+            "last_stage_change_at": "2026-02-19T12:43:35Z",
+            "last_stage_change_by_id": null,
+            "added_at": "2026-02-19T12:43:35Z",
+            "dropbox_email": "dropbox@fb948499.deals.futuresimple.com",
+            "owner_id": 2789884,
+            "value": 0,
+            "stage_id": 119627,
+            "contact_id": 570075610,
+            "custom_fields": {
+              "Details": "Dienst: Stromer ST3 Pinion\nOpmerkingen: Ik zou graag een proefrit maken op de Stromer ST3 Pinion met een comfortstuur. Is het mogelijk om hiervoor een afspraak te maken?",
+              "GCLID": "0"
+            },
+            "organization_id": null,
+            "estimated_close_date": null,
+            "customized_win_likelihood": null,
+            "last_activity_at": null,
+            "tags": [
+              "Inruil"
+            ]
+          },
+          "meta": {
+            "version": 2,
+            "type": "deal"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "2d85d211-ada1-4b3f-9af8-22713f8dc23a",
+  "activeVersionId": null,
+  "versionCounter": 8,
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-02-19T21:11:22.918Z",
+      "createdAt": "2026-02-19T21:11:22.918Z",
+      "role": "workflow:owner",
+      "workflowId": "CRv80VioCG9Z7xmu",
+      "projectId": "rOX3uTf9lsIdiy81",
+      "project": {
+        "updatedAt": "2025-07-17T20:31:24.249Z",
+        "createdAt": "2025-07-17T20:25:11.997Z",
+        "id": "rOX3uTf9lsIdiy81",
+        "name": "Odette Oostindiën <odette@qicq.nl>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
