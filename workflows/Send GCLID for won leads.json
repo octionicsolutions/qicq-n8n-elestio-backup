@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-19T21:53:07.350Z",
+  "updatedAt": "2026-02-24T15:43:24.475Z",
   "createdAt": "2026-02-19T21:11:22.918Z",
   "id": "CRv80VioCG9Z7xmu",
   "name": "Send GCLID for won leads",
@@ -161,6 +161,26 @@
       ],
       "id": "89ce2192-76c7-4377-b87e-1ff3a7b3e083",
       "name": "Send data to GTM platform"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "submitted",
+              "value": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "0aecd111-0253-434a-9f4b-f593d7ba4967",
+      "name": "Execution Data"
     }
   ],
   "connections": {
@@ -202,6 +222,17 @@
         [
           {
             "node": "Send data to GTM platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send data to GTM platform": {
+      "main": [
+        [
+          {
+            "node": "Execution Data",
             "type": "main",
             "index": 0
           }
@@ -257,9 +288,9 @@
       }
     ]
   },
-  "versionId": "2d85d211-ada1-4b3f-9af8-22713f8dc23a",
+  "versionId": "6f420a4a-d41f-4541-9ac1-6c4953f261c3",
   "activeVersionId": null,
-  "versionCounter": 8,
+  "versionCounter": 9,
   "triggerCount": 0,
   "tags": [],
   "shared": [
