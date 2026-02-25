@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-19T21:08:24.399Z",
+  "updatedAt": "2026-02-24T20:25:22.924Z",
   "createdAt": "2025-09-03T21:18:16.417Z",
   "id": "J8UbSOdoRSgc0fyE",
   "name": "Create Deal in ZD by submitted form and map contact",
@@ -578,31 +578,31 @@
             {
               "id": "33512a92-0ac7-459a-a73e-ebfd3441671e",
               "name": "first_name",
-              "value": "={{ $json.body['voornaam'] }}",
+              "value": "={{ $json.body.payload.user_properties[0].first_name }}",
               "type": "string"
             },
             {
               "id": "5b140476-d99d-45ef-a581-0f42837e10b6",
               "name": "last_name",
-              "value": "={{ $json.body['achternaam'] }}",
+              "value": "={{ $json.body.payload.user_properties[0].last_name }}",
               "type": "string"
             },
             {
               "id": "c4f6cbc5-4a78-41e1-9d78-708f046cfad1",
               "name": "email",
-              "value": "={{ $json.body['email'] }}",
+              "value": "={{ $json.body.payload.user_properties[0].email }}",
               "type": "string"
             },
             {
               "id": "bddad807-cce1-4b55-9259-7530e0cc8a26",
               "name": "mobile",
-              "value": "={{ $json.body['telefoon'] }}",
+              "value": "={{ $json.body.payload.user_properties[0].phone_number }}",
               "type": "string"
             },
             {
               "id": "50fd5c94-3fe3-452c-a591-661fb6f77358",
               "name": "Details",
-              "value": "=Merk: {{ $json.body['keuze_merk'] }}\\nModel: {{ $json.body['keuze_model'] }}\\nTermijn: {{ $json.body['keuze_termijn_nice'] }}\\nAard: {{ $json.body['keuze_aard'] }}\\nUitvoering: {{ $json.body['keuze_uitvoering_nice'] }}\\nAanbetaling: {{ $json.body['keuze_aanbetaling'] }}\\nMaandbedrag: €{{ $json.body['maandbedrag'] }}",
+              "value": "=Merk: {{ $json.body.payload.items[0].brand }}\\nSpecificaties: {{ $json.body.payload.items[0].model }}\\nPrijs: {{ $json.body.payload.items[0].price }}€\\nAantal: {{ $json.body.payload.items[0].quantity }}",
               "type": "string"
             },
             {
@@ -614,7 +614,7 @@
             {
               "id": "63608601-fa43-43b2-93d2-4da4081d7401",
               "name": "gclid",
-              "value": "",
+              "value": "={{ $json.body.cookie_data[0].gclid || \"\" }}",
               "type": "string"
             }
           ]
@@ -1289,40 +1289,6 @@
         }
       }
     ],
-    "Form: Lease Calculator": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n-u47189.vm.elestio.app",
-            "x-real-ip": "45.152.249.3",
-            "x-forwarded-for": "45.152.249.3",
-            "x-forwarded-proto": "https",
-            "x-forwarded-port": "443",
-            "connection": "close",
-            "content-length": "295",
-            "accept": "*/*",
-            "content-type": "application/json"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "voornaam": "Leon",
-            "achternaam": "Lehmler",
-            "email": "leon_lehmler@live.nl",
-            "telefoon": "",
-            "keuze_merk": "Riese & Müller",
-            "keuze_model": "4158",
-            "keuze_termijn_nice": "36 maanden",
-            "keuze_aard": "Particulier",
-            "keuze_uitvoering_nice": "Charger4 GT Vario",
-            "keuze_aanbetaling": "geen",
-            "maandbedrag": "184"
-          },
-          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/54869734-c9f4-4ba8-a617-d41c79cd550b",
-          "executionMode": "production"
-        }
-      }
-    ],
     "Map fields": [
       {
         "json": {
@@ -1333,19 +1299,6 @@
           "mobile": "+491234567890",
           "Details": "Merk & model: pedelec\\nType: E-bike\\nBouwjaar: gekocht\\nPrijs: fiets\\nKm-stand: display\\nIn orde?: Nee\\nDefect: kapot\\nFactuur?: Ja",
           "source_id": 13096459
-        }
-      }
-    ],
-    "Map fields2": [
-      {
-        "json": {
-          "form": "Lease Calculator",
-          "first_name": "",
-          "last_name": "",
-          "email": "sandyjsmit@hotmail.com",
-          "mobile": "",
-          "Details": "Merk: Lovens\\nModel: 5451\\nTermijn: 36 maanden\\nAard: Zakelijk\\nUitvoering: Lovens Explorer S75\\nAanbetaling: plus_250\\nMaandbedrag: €131.40495867769",
-          "source_id": 14494999
         }
       }
     ],
@@ -1515,11 +1468,68 @@
           "item": 0
         }
       }
+    ],
+    "Form: Lease Calculator": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n-u47189.vm.elestio.app",
+            "x-real-ip": "45.152.249.3",
+            "x-forwarded-for": "45.152.249.3",
+            "x-forwarded-proto": "https",
+            "x-forwarded-port": "443",
+            "connection": "close",
+            "content-length": "481",
+            "accept": "*/*",
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "cookie_data": [
+              {
+                "gclid": null,
+                "ad_storage": "false",
+                "analytics_storage": "false",
+                "necessary": "false",
+                "preferences": "false"
+              }
+            ],
+            "payload": {
+              "event_name": "leasecalculator_ingevuld",
+              "items": [
+                {
+                  "id": "leasecalculator",
+                  "name": "Leasecalculator",
+                  "price": 0,
+                  "quantity": 1,
+                  "currency": "EUR",
+                  "brand": "QicQ",
+                  "model": "Specter, 5549, 24 maanden, Particulier, Specter 1, standaard"
+                }
+              ],
+              "user_properties": [
+                {
+                  "first_name": "Mario",
+                  "last_name": "Test",
+                  "email": "mario@octionic.com",
+                  "phone_number": "49153336698"
+                }
+              ]
+            }
+          },
+          "webhookUrl": "https://n8n-u47189.vm.elestio.app/webhook/54869734-c9f4-4ba8-a617-d41c79cd550b",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
-  "versionId": "ab2a32ba-5b5e-4172-aaa4-acb46fc82117",
-  "activeVersionId": "ab2a32ba-5b5e-4172-aaa4-acb46fc82117",
-  "versionCounter": 15,
+  "versionId": "89c4b028-b16e-4539-b394-0a8a67b936fb",
+  "activeVersionId": "89c4b028-b16e-4539-b394-0a8a67b936fb",
+  "versionCounter": 21,
   "triggerCount": 4,
   "tags": [
     {
